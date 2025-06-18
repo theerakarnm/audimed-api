@@ -1,0 +1,97 @@
+/**
+ * Core type definitions for the Healthcare DRG Optimization API
+ */
+
+/**
+ * Optimization request payload
+ */
+export interface OptimizationRequest {
+  /** Available ICD-10 codes to select from */
+  availableCodes: string[];
+  /** CSV data as string containing historical cases */
+  datasetCsv?: string;
+  /** Maximum number of secondary diagnoses to include */
+  maxSecondaryDiagnoses?: number;
+}
+
+/**
+ * Optimization response payload
+ */
+export interface OptimizationResponse {
+  /** Whether the optimization was successful */
+  success: boolean;
+  /** Analysis of patterns found in the dataset */
+  patternAnalysis?: string;
+  /** Selected primary diagnosis code */
+  pdx?: string;
+  /** Selected secondary diagnosis codes */
+  sdx?: string[];
+  /** Reasoning behind the selection */
+  reasoning?: string;
+  /** Estimated adjusted Relative Weight */
+  estimatedAdjRw?: number;
+  /** Confidence level of the optimization */
+  confidenceLevel?: string;
+  /** Error message if optimization failed */
+  errorMessage?: string;
+}
+
+/**
+ * Dataset case row structure
+ */
+export interface DatasetCase {
+  caseId?: string | number;
+  adjRw: number;
+  pdx: string;
+  [key: string]: string | number | undefined; // For dynamic sdx columns
+}
+
+/**
+ * DeepSeek API message structure
+ */
+export interface DeepSeekMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+/**
+ * DeepSeek API response structure
+ */
+export interface DeepSeekResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
+
+/**
+ * DeepSeek optimization result
+ */
+export interface DeepSeekOptimizationResult {
+  patternAnalysis: string;
+  pdx: string;
+  sdx: string[];
+  reasoning: string;
+  estimatedAdjRw: number;
+  confidenceLevel: string;
+}
+
+/**
+ * API Error response structure
+ */
+export interface ApiError {
+  message: string;
+  statusCode: number;
+  details?: unknown;
+}
+
+/**
+ * Health check response
+ */
+export interface HealthCheckResponse {
+  apiStatus: string;
+  deepseekStatus: string;
+  timestamp: string;
+  error?: string;
+}
