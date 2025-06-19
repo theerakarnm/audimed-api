@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import type { Context } from 'hono';
 import { cors } from 'hono/cors'
+import { readFile } from 'fs/promises';
 
 import {
   optimizationRequestSchema,
@@ -73,13 +74,17 @@ app.post(
     try {
       const request = c.req.valid('json')
 
-      // Validate dataset CSV is provided
-      if (!request.datasetCsv) {
-        throw new ApiError('datasetCsv is required', 400);
+      // Read dataset from file path
+      const datasetPath = '/asset/dataset.csv';
+      let csvString: string;
+      try {
+        csvString = await readFile(datasetPath, 'utf8');
+      } catch (err) {
+        throw new ApiError(`Failed to read dataset file at ${datasetPath}`, 500);
       }
 
       // Parse CSV data
-      const datasetCases = parseCsvToDataset(request.datasetCsv);
+      const datasetCases = parseCsvToDataset(csvString);
 
       // Validate required columns exist
       if (datasetCases.length === 0) {
@@ -212,16 +217,13 @@ app.get('/example-request', (c: Context) => {
         'I632',
         'N390',
       ],
-      datasetCsv:
-        'case_id,adj RW,pdx,sdx1,sdx2\n001,23.33,J150,J960,D638\n002,12.31,J180,J969,N179',
       maxSecondaryDiagnoses: 12,
     },
-    curlExample: `
-curl -X POST "http://localhost:8000/optimize" \\
-     -H "Content-Type: application/json" \\
+      curlExample: `
+curl -X POST "http://localhost:8000/optimize" \
+     -H "Content-Type: application/json" \
      -d '{
-       "availableCodes": ["J150", "J180", "J960", "D638"],
-       "datasetCsv": "case_id,adj RW,pdx,sdx1\\n001,23.33,J150,J960"
+       "availableCodes": ["J150", "J180", "J960", "D638"]
      }'`,
   });
 });
