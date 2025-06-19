@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import type { Context } from 'hono';
 import { cors } from 'hono/cors'
+import { readFile } from 'fs/promises';
 
 import {
   optimizationRequestSchema,
@@ -73,13 +74,15 @@ app.post(
     try {
       const request = c.req.valid('json')
 
-      // Validate dataset CSV is provided
-      if (!request.datasetCsv) {
-        throw new ApiError('datasetCsv is required', 400);
+      const datasetPath = '/Users/jametirakarn/Desktop/Theerakarnm/ACC_NIA/predict_factor/app/src/asset/dataset.csv';
+      let csvString: string;
+      try {
+        csvString = await readFile(datasetPath, 'utf8');
+      } catch (err) {
+        throw new ApiError(`Failed to read dataset file at ${datasetPath}`, 500);
       }
-
       // Parse CSV data
-      const datasetCases = parseCsvToDataset(request.datasetCsv);
+      const datasetCases = parseCsvToDataset(csvString);
 
       // Validate required columns exist
       if (datasetCases.length === 0) {

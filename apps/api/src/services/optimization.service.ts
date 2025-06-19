@@ -111,7 +111,7 @@ ANALYSIS REQUIREMENTS:
 SELECTION CRITERIA:
 - Choose 1 PRIMARY diagnosis (pdx) from available codes
 - Choose up to ${maxSecondaryDiagnoses} SECONDARY diagnoses from available codes
-- Aim for estimated adj RW > 15.0
+- Aim for estimated adj RW > 10.0
 
 RESPOND IN VALID JSON FORMAT ONLY:
 {
@@ -120,7 +120,7 @@ RESPOND IN VALID JSON FORMAT ONLY:
   "sdx": ["sdx1_code", "sdx2_code", "sdx3_code", "sdx4_code", "sdx5_code", "sdx6_code", "sdx7_code", "sdx8_code", "sdx9_code", "sdx10_code", "sdx11_code", "sdx12_code"],
   "reasoning": "Detailed explanation of why this combination should maximize adj RW",
   "estimated_adj_rw": 0.0,
-  "confidence_level": "1-10"
+  "confidence_level": "1-100"
 }`;
   }
 
@@ -186,13 +186,15 @@ RESPOND IN VALID JSON FORMAT ONLY:
 
     const result = parsed as Record<string, unknown>;
 
+    console.log(result);
+
     if (
       typeof result.pattern_analysis !== 'string' ||
       typeof result.pdx !== 'string' ||
       !Array.isArray(result.sdx) ||
       typeof result.reasoning !== 'string' ||
       typeof result.estimated_adj_rw !== 'number' ||
-      typeof result.confidence_level !== 'string'
+      typeof result.confidence_level !== 'number'
     ) {
       throw new ApiError('Invalid optimization result format', 500);
     }
@@ -203,7 +205,7 @@ RESPOND IN VALID JSON FORMAT ONLY:
       sdx: result.sdx.filter((code): code is string => typeof code === 'string'),
       reasoning: result.reasoning,
       estimatedAdjRw: result.estimated_adj_rw,
-      confidenceLevel: result.confidence_level,
+      confidenceLevel: result.confidence_level.toString(),
     };
   }
 
