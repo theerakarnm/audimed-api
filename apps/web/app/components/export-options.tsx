@@ -1,10 +1,10 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "~/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { FileText, Download, Printer } from "lucide-react"
-import { useDiagnosisStore } from "@/lib/store"
-import { toast } from "@/hooks/use-toast"
+import { useDiagnosisStore } from "~/libs/store"
+import { toast } from "~/hooks/use-toast"
 
 export function ExportOptions() {
   const { rankedCodes, diagnosisText } = useDiagnosisStore()

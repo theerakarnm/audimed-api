@@ -1,18 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
+import { Button } from "~/components/ui/button"
+import { Badge } from "~/components/ui/badge"
+import { Progress } from "~/components/ui/progress"
 import { GripVertical, Crown, TrendingUp, Info, Calculator } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useDiagnosisStore } from "@/lib/store"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip"
+import { useDiagnosisStore } from "~/libs/store"
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import { SortableItem } from "@/components/sortable-item"
-import { toast } from "@/hooks/use-toast"
-import { calculateAdjRw } from "@/lib/adjrw-calculator"
+import { SortableItem } from "~/components/sortable-item"
+import { toast } from "~/hooks/use-toast"
+import { calculateAdjRw } from "~/libs/adjrw-calculator"
 
 export function RankingInterface() {
   const { selectedCodes, rankedCodes, setRankedCodes } = useDiagnosisStore()
@@ -258,9 +258,8 @@ export function RankingInterface() {
                       <div className="flex items-center space-x-2">
                         <GripVertical className="w-5 h-5 text-gray-400 cursor-grab" />
                         <div
-                          className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                            index === 0 ? "bg-amber-500 text-white" : "bg-gray-200 text-gray-700"
-                          }`}
+                          className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${index === 0 ? "bg-amber-500 text-white" : "bg-gray-200 text-gray-700"
+                            }`}
                         >
                           {index === 0 ? <Crown className="w-4 h-4" /> : index + 1}
                         </div>

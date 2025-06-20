@@ -1,15 +1,15 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "~/components/ui/badge"
+import { Button } from "~/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog"
+import { Input } from "~/components/ui/input"
+import { Label } from "~/components/ui/label"
+import { Textarea } from "~/components/ui/textarea"
 import { X, Plus, RefreshCw } from "lucide-react"
-import { useDiagnosisStore } from "@/lib/store"
+import { useDiagnosisStore } from "~/libs/store"
 import { useState } from "react"
-import { toast } from "@/hooks/use-toast"
+import { toast } from "~/hooks/use-toast"
 
 export function SelectedCodes() {
   const { selectedCodes, removeSelectedCode, addSelectedCode, recalculateRanking, rankedCodes } = useDiagnosisStore()

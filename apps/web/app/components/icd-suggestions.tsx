@@ -1,11 +1,11 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "~/components/ui/card"
+import { Button } from "~/components/ui/button"
+import { Badge } from "~/components/ui/badge"
 import { Plus, X } from "lucide-react"
-import { useDiagnosisStore } from "@/lib/store"
-import type { IcdCode } from "@/lib/types"
+import { useDiagnosisStore } from "~/libs/store"
+import type { IcdCode } from "~/libs/types"
 
 export function IcdSuggestions() {
   const { suggestions, addSelectedCode, removeSelectedCode, selectedCodes } = useDiagnosisStore()
@@ -35,9 +35,8 @@ export function IcdSuggestions() {
       {suggestions.map((suggestion) => (
         <Card
           key={suggestion.code}
-          className={`transition-all hover:shadow-md ${
-            isCodeSelected(suggestion.code) ? "ring-2 ring-green-500 bg-green-50" : "hover:border-blue-300"
-          }`}
+          className={`transition-all hover:shadow-md ${isCodeSelected(suggestion.code) ? "ring-2 ring-green-500 bg-green-50" : "hover:border-blue-300"
+            }`}
         >
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-3">

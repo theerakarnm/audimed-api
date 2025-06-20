@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
+import { Button } from "~/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { User, Search, Plus, UserCheck } from "lucide-react"
-import { PatientSearch } from "@/components/patient-search"
-import { PatientForm } from "@/components/patient-form"
-import { useDiagnosisStore } from "@/lib/store"
+import { PatientSearch } from "~/components/patient-search"
+import { PatientForm } from "~/components/patient-form"
+import { useDiagnosisStore } from "~/libs/store"
 
 export function PatientInformation() {
   const { patientInfo, isPatientInfoComplete } = useDiagnosisStore()

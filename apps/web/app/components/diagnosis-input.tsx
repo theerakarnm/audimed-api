@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
+import { Textarea } from "~/components/ui/textarea"
+import { Button } from "~/components/ui/button"
 import { Search, Loader2 } from "lucide-react"
-import { useDiagnosisStore } from "@/lib/store"
-import { toast } from "@/hooks/use-toast"
+import { useDiagnosisStore } from "~/libs/store"
+import { toast } from "~/hooks/use-toast"
 
 export function DiagnosisInput() {
   const { diagnosisText, setDiagnosisText, searchIcdCodes } = useDiagnosisStore()

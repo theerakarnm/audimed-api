@@ -3,14 +3,14 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Input } from "~/components/ui/input"
+import { Button } from "~/components/ui/button"
+import { Card, CardContent } from "~/components/ui/card"
+import { Badge } from "~/components/ui/badge"
 import { Search, Loader2, User, Calendar, Phone, FileText } from "lucide-react"
-import { useDiagnosisStore } from "@/lib/store"
-import { searchPatients, type Patient } from "@/lib/mock-patients"
-import { toast } from "@/hooks/use-toast"
+import { useDiagnosisStore } from "~/libs/store"
+import { searchPatients, type Patient } from "~/libs/mock-patients"
+import { toast } from "~/hooks/use-toast"
 
 interface PatientSearchProps {
   onPatientSelected: () => void
