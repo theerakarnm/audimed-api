@@ -14,16 +14,7 @@ export interface OptimizationRequest {
   maxSecondaryDiagnoses?: number;
 }
 
-/**
- * Optimization response payload
- */
-export interface OptimizationResponse {
-  /** Whether the optimization was successful */
-  success: boolean;
-  /** Selected primary diagnosis code */
-  pdx?: string;
-  /** Selected secondary diagnosis codes */
-  sdx?: string[];
+export interface AdjRwResult {
   /** Estimated adjusted Relative Weight */
   estimatedAdjRw?: number;
   /** Confidence level of the optimization */
@@ -36,6 +27,18 @@ export interface OptimizationResponse {
   complexityFactor?: number;
   /** List of additional recommendations */
   recommendations?: string[];
+}
+
+/**
+ * Optimization response payload
+ */
+export interface OptimizationResponse extends AdjRwResult {
+  /** Whether the optimization was successful */
+  success: boolean;
+  /** Selected primary diagnosis code */
+  pdx?: string;
+  /** Selected secondary diagnosis codes */
+  sdx?: string[];
   /** Error message if optimization failed */
   errorMessage?: string;
 }

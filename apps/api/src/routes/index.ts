@@ -74,7 +74,7 @@ app.post(
     try {
       const request = c.req.valid('json')
 
-      const datasetPath = '/Users/jametirakarn/Desktop/Theerakarnm/ACC_NIA/predict_factor/app/src/asset/dataset.csv';
+      const datasetPath = '/Users/jametirakarn/Desktop/Theerakarnm/ACC_NIA/predict_factor/apps/api/src/asset/dataset.csv';
       let csvString: string;
       try {
         csvString = await readFile(datasetPath, 'utf8');
