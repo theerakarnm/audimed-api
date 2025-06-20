@@ -77,10 +77,12 @@ export function RankingInterface() {
   const handleCalculateAdjRw = () => {
     if (rankedCodes.length > 0) {
       const score = calculateAdjRw(rankedCodes)
+      console.log(score);
+
       setAdjRwScore(score)
       toast({
         title: "AdjRw Calculated",
-        description: `Ranking efficiency score: ${(score.efficiency * 100).toFixed(0)}%`,
+        description: `Ranking efficiency score: ${(score.confidenceLevel * 100).toFixed(0)}%`,
       })
     }
   }
@@ -166,17 +168,17 @@ export function RankingInterface() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="text-3xl font-bold text-blue-900">{adjRwScore.totalScore.toFixed(2)}</div>
+                <div className="text-3xl font-bold text-blue-900">{adjRwScore.estimatedAdjRw.toFixed(2)}</div>
                 <div>
-                  <Badge className={`${getScoreColor(adjRwScore.efficiency)} border-0`}>
-                    {getScoreLabel(adjRwScore.efficiency)}
+                  <Badge className={`${getScoreColor(adjRwScore.confidenceLevel)} border-0`}>
+                    {getScoreLabel(adjRwScore.confidenceLevel)}
                   </Badge>
-                  <p className="text-sm text-gray-600 mt-1">Efficiency: {(adjRwScore.efficiency * 100).toFixed(0)}%</p>
+                  <p className="text-sm text-gray-600 mt-1">Efficiency: {(adjRwScore.confidenceLevel * 100).toFixed(0)}%</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-700">Clinical Alignment</p>
-                <Progress value={adjRwScore.efficiency * 100} className="w-32 mt-1" />
+                <Progress value={adjRwScore.confidenceLevel * 100} className="w-32 mt-1" />
               </div>
             </div>
 

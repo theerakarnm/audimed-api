@@ -1,8 +1,8 @@
 import type { IcdCode } from "./types"
 
 export interface AdjRwResult {
-  totalScore: number
-  efficiency: number
+  estimatedAdjRw: number
+  confidenceLevel: number
   primaryWeight: number
   secondaryWeight: number
   complexityFactor: number
@@ -33,8 +33,8 @@ const baseWeights: Record<string, number> = {
 export function calculateAdjRw(rankedCodes: (IcdCode & { rank: number })[]): AdjRwResult {
   if (rankedCodes.length === 0) {
     return {
-      totalScore: 0,
-      efficiency: 0,
+      estimatedAdjRw: 0,
+      confidenceLevel: 0,
       primaryWeight: 0,
       secondaryWeight: 0,
       complexityFactor: 0,
@@ -61,12 +61,12 @@ export function calculateAdjRw(rankedCodes: (IcdCode & { rank: number })[]): Adj
   const complexityFactor = Math.min(2.0, 1 + (uniqueCategories - 1) * 0.2 + rankedCodes.length * 0.05)
 
   // Calculate total score
-  const totalScore = (primaryWeight + secondaryWeight) * complexityFactor
+  const estimatedAdjRw = (primaryWeight + secondaryWeight) * complexityFactor
 
   // Calculate efficiency (0-1 scale)
   const maxPossibleScore =
     baseWeights.primary * 1.5 * 1.0 + (rankedCodes.length - 1) * baseWeights.secondary * 1.5 * 1.0
-  const efficiency = Math.min(1.0, totalScore / (maxPossibleScore * complexityFactor))
+  const confidenceLevel = Math.min(1.0, estimatedAdjRw / (maxPossibleScore * complexityFactor))
 
   // Generate recommendations
   const recommendations: string[] = []
@@ -88,7 +88,7 @@ export function calculateAdjRw(rankedCodes: (IcdCode & { rank: number })[]): Adj
     recommendations.push(`${lowConfidenceCodes} diagnosis(es) have low confidence - review clinical documentation`)
   }
 
-  if (efficiency < 0.6) {
+  if (confidenceLevel < 0.6) {
     recommendations.push(
       "Overall ranking efficiency is below optimal - consider reordering diagnoses by clinical priority",
     )
@@ -99,8 +99,8 @@ export function calculateAdjRw(rankedCodes: (IcdCode & { rank: number })[]): Adj
   }
 
   return {
-    totalScore,
-    efficiency,
+    estimatedAdjRw,
+    confidenceLevel,
     primaryWeight,
     secondaryWeight,
     complexityFactor,
