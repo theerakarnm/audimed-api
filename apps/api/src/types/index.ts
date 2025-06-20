@@ -30,6 +30,16 @@ export interface AdjRwResult {
 }
 
 /**
+ * Request payload for Adj RW evaluation of a specific code order
+ */
+export interface AdjRwRequest {
+  /** Primary diagnosis code */
+  pdx: string;
+  /** Ordered list of secondary diagnosis codes */
+  sdx: string[];
+}
+
+/**
  * Optimization response payload
  */
 export interface OptimizationResponse extends AdjRwResult {

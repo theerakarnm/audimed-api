@@ -7,10 +7,12 @@ import { readFile } from 'fs/promises';
 import {
   optimizationRequestSchema,
   fileUploadSchema,
+  adjRwRequestSchema,
   type OptimizationRequestInput,
   type FileUploadInput,
+  type AdjRwRequestInput,
 } from '../schemas';
-import type { OptimizationResponse, HealthCheckResponse } from '../types';
+import type { OptimizationResponse, HealthCheckResponse, AdjRwResult } from '../types';
 import { OptimizationService } from '../services/optimization.service';
 import {
   ApiError,
@@ -183,6 +185,29 @@ app.post(
         errorMessage: `File optimization failed: ${String(error)}`,
       };
       return c.json(response, 500);
+    }
+  }
+);
+
+/**
+ * Evaluate a provided diagnosis code combination
+ */
+app.post(
+  '/adjrw',
+  zValidator('json', adjRwRequestSchema),
+  async (c) => {
+    try {
+      const { pdx, sdx } = c.req.valid('json') as AdjRwRequestInput;
+
+      const result: AdjRwResult = await optimizationService.evaluateDiagnosisCodes(pdx, sdx);
+
+      return c.json(result);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        return c.json({ error: error.message }, 500);
+      }
+
+      return c.json({ error: `Adj RW evaluation failed: ${String(error)}` }, 500);
     }
   }
 );

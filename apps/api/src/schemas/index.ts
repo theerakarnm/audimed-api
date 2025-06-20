@@ -26,6 +26,13 @@ export const optimizationResponseSchema = z.object({
   errorMessage: z.string().optional(),
 });
 
+export const adjRwRequestSchema = z.object({
+  pdx: z.string().min(1, 'Primary diagnosis is required'),
+  sdx: z
+    .array(z.string().min(1, 'Code cannot be empty'))
+    .max(15, 'Too many secondary diagnoses'),
+});
+
 export const fileUploadSchema = z.object({
   availableCodes: z.string().min(1, 'Available codes parameter is required'),
 });
@@ -43,4 +50,5 @@ export const envSchema = z.object({
 export type OptimizationRequestInput = z.infer<typeof optimizationRequestSchema>;
 export type OptimizationResponseOutput = z.infer<typeof optimizationResponseSchema>;
 export type FileUploadInput = z.infer<typeof fileUploadSchema>;
+export type AdjRwRequestInput = z.infer<typeof adjRwRequestSchema>;
 export type EnvConfig = z.infer<typeof envSchema>;

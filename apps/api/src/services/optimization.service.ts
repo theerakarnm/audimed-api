@@ -2,6 +2,7 @@ import type {
   DatasetCase,
   DeepSeekOptimizationResult,
   OptimizationResponse,
+  AdjRwResult,
 } from '../types';
 import { DeepSeekService } from './deepseek.service';
 import { ApiError, prepareDatasetSummary, extractJsonFromResponse } from '../utils';
@@ -208,6 +209,84 @@ RESPOND IN VALID JSON FORMAT ONLY:
     return {
       pdx: result.pdx,
       sdx: result.sdx.filter((code): code is string => typeof code === 'string'),
+      estimatedAdjRw: result.estimated_adj_rw,
+      confidenceLevel: result.confidence_level.toString(),
+      primaryWeight: result.primary_weight,
+      secondaryWeight: result.secondary_weight,
+      complexityFactor: result.complexity_factor,
+      recommendations: result.recommendations.filter((item): item is string => typeof item === 'string').slice(0, 3),
+    };
+  }
+
+  /**
+   * Evaluate a specific diagnosis code ordering
+   */
+  async evaluateDiagnosisCodes(pdx: string, sdx: string[]): Promise<AdjRwResult> {
+    try {
+      const prompt = this.generateEvaluationPrompt(pdx, sdx);
+
+      const responseText = await this.deepSeekService.chatCompletion([
+        {
+          role: 'system',
+          content: this.systemPrompt,
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ]);
+
+      return this.parseAdjRwResult(responseText);
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(`Evaluation failed: ${String(error)}`, 500);
+    }
+  }
+
+  /**
+   * Build prompt for single combination evaluation
+   */
+  private generateEvaluationPrompt(pdx: string, sdx: string[]): string {
+    return `
+Evaluate the following ICD-10 diagnosis combination for adjusted Relative Weight.
+PRIMARY: ${pdx}
+SECONDARY: ${sdx.join(', ')}
+
+Respond ONLY with valid JSON in the format:
+{
+  "estimated_adj_rw": 0.0,
+  "confidence_level": "1-100",
+  "primary_weight": 0.0,
+  "secondary_weight": 0.0,
+  "complexity_factor": 0.0,
+  "recommendations": ["Rec 1", "Rec 2", "Rec 3"]
+}`;
+  }
+
+  /**
+   * Parse AdjRw result from AI response
+   */
+  private parseAdjRwResult(responseText: string): AdjRwResult {
+    const parsed = extractJsonFromResponse(responseText);
+
+    if (!parsed || typeof parsed !== 'object') {
+      throw new ApiError('Invalid AdjRw result structure', 500);
+    }
+
+    const result = parsed as Record<string, unknown>;
+
+    if (
+      typeof result.estimated_adj_rw !== 'number' ||
+      typeof result.confidence_level === 'undefined' ||
+      typeof result.primary_weight !== 'number' ||
+      typeof result.secondary_weight !== 'number' ||
+      typeof result.complexity_factor !== 'number' ||
+      !Array.isArray(result.recommendations)
+    ) {
+      throw new ApiError('Invalid AdjRw result format', 500);
+    }
+
+    return {
       estimatedAdjRw: result.estimated_adj_rw,
       confidenceLevel: result.confidence_level.toString(),
       primaryWeight: result.primary_weight,
