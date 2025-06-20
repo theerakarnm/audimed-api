@@ -1,0 +1,94 @@
+import { create } from "zustand"
+import type { IcdCode, DiagnosisState, PatientInfo } from "./types"
+import { mockIcdSearch } from "./mock-data"
+
+export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
+  diagnosisText: "",
+  suggestions: [],
+  selectedCodes: [],
+  rankedCodes: [],
+  patientInfo: {
+    patientId: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: undefined,
+    gender: "",
+    mrn: "",
+    phone: "",
+    email: "",
+  },
+
+  setDiagnosisText: (text: string) => set({ diagnosisText: text }),
+
+  searchIcdCodes: async (text: string) => {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const suggestions = mockIcdSearch(text)
+    set({ suggestions })
+  },
+
+  addSelectedCode: (code: IcdCode) => {
+    const { selectedCodes } = get()
+    if (!selectedCodes.find((selected) => selected.code === code.code)) {
+      set({ selectedCodes: [...selectedCodes, code] })
+    }
+  },
+
+  removeSelectedCode: (codeToRemove: string) => {
+    const { selectedCodes, rankedCodes } = get()
+    set({
+      selectedCodes: selectedCodes.filter((code) => code.code !== codeToRemove),
+      rankedCodes: rankedCodes.filter((code) => code.code !== codeToRemove),
+    })
+  },
+
+  setRankedCodes: (codes: (IcdCode & { rank: number })[]) => {
+    set({ rankedCodes: codes })
+  },
+
+  setPatientInfo: (info: PatientInfo) => set({ patientInfo: info }),
+
+  isPatientInfoComplete: () => {
+    const { patientInfo } = get()
+    return !!(patientInfo.patientId && patientInfo.firstName && patientInfo.lastName && patientInfo.dateOfBirth)
+  },
+
+  recalculateRanking: () => {
+    const { selectedCodes } = get()
+    if (selectedCodes.length === 0) return
+
+    // Sort by confidence score (highest first) and then by category priority
+    const categoryPriority: Record<string, number> = {
+      "Circulatory System": 1,
+      "Respiratory System": 2,
+      "Endocrine System": 3,
+      "Mental Health": 4,
+      "Genitourinary System": 5,
+      "Musculoskeletal System": 6,
+      "Digestive System": 7,
+      "Skin and Subcutaneous Tissue": 8,
+      "Healthcare Encounters": 9,
+      "Symptoms and Signs": 10,
+      Custom: 11,
+    }
+
+    const sortedCodes = [...selectedCodes].sort((a, b) => {
+      // First sort by confidence (higher is better)
+      if (b.confidence !== a.confidence) {
+        return b.confidence - a.confidence
+      }
+
+      // Then sort by category priority (lower number is higher priority)
+      const aPriority = categoryPriority[a.category || "Custom"] || 99
+      const bPriority = categoryPriority[b.category || "Custom"] || 99
+      return aPriority - bPriority
+    })
+
+    const rankedCodes = sortedCodes.map((code, index) => ({
+      ...code,
+      rank: index + 1,
+    }))
+
+    set({ rankedCodes })
+  },
+}))
