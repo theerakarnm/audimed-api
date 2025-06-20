@@ -15,12 +15,14 @@ export const optimizationRequestSchema = z.object({
 
 export const optimizationResponseSchema = z.object({
   success: z.boolean(),
-  patternAnalysis: z.string().optional(),
   pdx: z.string().optional(),
   sdx: z.array(z.string()).optional(),
-  reasoning: z.string().optional(),
   estimatedAdjRw: z.number().optional(),
   confidenceLevel: z.string().optional(),
+  primaryWeight: z.number().optional(),
+  secondaryWeight: z.number().optional(),
+  complexityFactor: z.number().optional(),
+  recommendations: z.array(z.string()).max(3).optional(),
   errorMessage: z.string().optional(),
 });
 
