@@ -20,18 +20,22 @@ export interface OptimizationRequest {
 export interface OptimizationResponse {
   /** Whether the optimization was successful */
   success: boolean;
-  /** Analysis of patterns found in the dataset */
-  patternAnalysis?: string;
   /** Selected primary diagnosis code */
   pdx?: string;
   /** Selected secondary diagnosis codes */
   sdx?: string[];
-  /** Reasoning behind the selection */
-  reasoning?: string;
   /** Estimated adjusted Relative Weight */
   estimatedAdjRw?: number;
   /** Confidence level of the optimization */
   confidenceLevel?: string;
+  /** Calculated weight of the primary diagnosis */
+  primaryWeight?: number;
+  /** Combined weight of the secondary diagnoses */
+  secondaryWeight?: number;
+  /** Overall complexity adjustment factor */
+  complexityFactor?: number;
+  /** List of additional recommendations */
+  recommendations?: string[];
   /** Error message if optimization failed */
   errorMessage?: string;
 }
@@ -69,12 +73,14 @@ export interface DeepSeekResponse {
  * DeepSeek optimization result
  */
 export interface DeepSeekOptimizationResult {
-  patternAnalysis: string;
   pdx: string;
   sdx: string[];
-  reasoning: string;
   estimatedAdjRw: number;
   confidenceLevel: string;
+  primaryWeight: number;
+  secondaryWeight: number;
+  complexityFactor: number;
+  recommendations: string[];
 }
 
 /**

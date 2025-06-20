@@ -61,12 +61,14 @@ export class OptimizationService {
 
       return {
         success: true,
-        patternAnalysis: result.patternAnalysis,
         pdx: result.pdx,
         sdx: result.sdx,
-        reasoning: result.reasoning,
         estimatedAdjRw: result.estimatedAdjRw,
         confidenceLevel: result.confidenceLevel,
+        primaryWeight: result.primaryWeight,
+        secondaryWeight: result.secondaryWeight,
+        complexityFactor: result.complexityFactor,
+        recommendations: result.recommendations,
       };
     } catch (error) {
       if (error instanceof ApiError) {
@@ -115,12 +117,14 @@ SELECTION CRITERIA:
 
 RESPOND IN VALID JSON FORMAT ONLY:
 {
-  "pattern_analysis": "Detailed analysis of high-value patterns found in dataset",
   "pdx": "selected_primary_diagnosis_code",
   "sdx": ["sdx1_code", "sdx2_code", "sdx3_code", "sdx4_code", "sdx5_code", "sdx6_code", "sdx7_code", "sdx8_code", "sdx9_code", "sdx10_code", "sdx11_code", "sdx12_code"],
-  "reasoning": "Detailed explanation of why this combination should maximize adj RW",
   "estimated_adj_rw": 0.0,
-  "confidence_level": "1-100"
+  "confidence_level": "1-100",
+  "primary_weight": 0.0,
+  "secondary_weight": 0.0,
+  "complexity_factor": 0.0,
+  "recommendations": ["Rec 1", "Rec 2", "Rec 3"]
 }`;
   }
 
@@ -189,23 +193,27 @@ RESPOND IN VALID JSON FORMAT ONLY:
     console.log(result);
 
     if (
-      typeof result.pattern_analysis !== 'string' ||
       typeof result.pdx !== 'string' ||
       !Array.isArray(result.sdx) ||
-      typeof result.reasoning !== 'string' ||
       typeof result.estimated_adj_rw !== 'number' ||
-      typeof result.confidence_level !== 'number'
+      typeof result.confidence_level !== 'number' ||
+      typeof result.primary_weight !== 'number' ||
+      typeof result.secondary_weight !== 'number' ||
+      typeof result.complexity_factor !== 'number' ||
+      !Array.isArray(result.recommendations)
     ) {
       throw new ApiError('Invalid optimization result format', 500);
     }
 
     return {
-      patternAnalysis: result.pattern_analysis,
       pdx: result.pdx,
       sdx: result.sdx.filter((code): code is string => typeof code === 'string'),
-      reasoning: result.reasoning,
       estimatedAdjRw: result.estimated_adj_rw,
       confidenceLevel: result.confidence_level.toString(),
+      primaryWeight: result.primary_weight,
+      secondaryWeight: result.secondary_weight,
+      complexityFactor: result.complexity_factor,
+      recommendations: result.recommendations.filter((item): item is string => typeof item === 'string').slice(0, 3),
     };
   }
 

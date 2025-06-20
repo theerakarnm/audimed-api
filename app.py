@@ -90,12 +90,14 @@ def deepseek_optimize_diagnosis_codes(dataset_path, available_codes):
 
     RESPOND IN VALID JSON FORMAT ONLY:
     {{
-        "pattern_analysis": "Detailed analysis of high-value patterns found in dataset",
         "pdx": "selected_primary_diagnosis_code",
         "sdx": ["sdx1_code", "sdx2_code", "sdx3_code", "sdx4_code", "sdx5_code", "sdx6_code", "sdx7_code", "sdx8_code", "sdx9_code", "sdx10_code", "sdx11_code", "sdx12_code"],
-        "reasoning": "Detailed explanation of why this combination should maximize adj RW",
         "estimated_adj_rw": 0.0,
-        "confidence_level": "1-100 percentage scale"
+        "confidence_level": "1-100 percentage scale",
+        "primary_weight": 0.0,
+        "secondary_weight": 0.0,
+        "complexity_factor": 0.0,
+        "recommendations": ["Rec 1", "Rec 2", "Rec 3"]
     }}
     """
     
@@ -260,13 +262,17 @@ if __name__ == "__main__":
         print("\n" + "="*60)
         print("🎯 DEEPSEEK OPTIMIZATION RESULT")
         print("="*60)
-        print(f"📊 Pattern Analysis:\n{result['pattern_analysis']}\n")
         print(f"🏥 Primary Diagnosis (pdx): {result['pdx']}")
         print("\n📋 Secondary Diagnoses:")
         for i, code in enumerate(result['sdx'], 1):
             print(f"   sdx{i:2d}: {code}")
         print(f"\n💰 Estimated adj RW: {result['estimated_adj_rw']:.2f}")
         print(f"🎯 Confidence Level: {result['confidence_level']}/10")
-        print(f"\n💡 Reasoning:\n{result['reasoning']}")
+        print(f"\n📈 Primary Weight: {result['primary_weight']}")
+        print(f"📉 Secondary Weight: {result['secondary_weight']}")
+        print(f"⚙️ Complexity Factor: {result['complexity_factor']}")
+        print("\n📝 Recommendations:")
+        for rec in result.get('recommendations', []):
+            print(f"  - {rec}")
     else:
         print("❌ Optimization failed. Please check your API key and data file.")
