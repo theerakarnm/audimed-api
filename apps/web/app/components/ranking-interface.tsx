@@ -12,12 +12,13 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { SortableItem } from "~/components/sortable-item"
 import { toast } from "~/hooks/use-toast"
-import { calculateAdjRw } from "~/libs/adjrw-calculator"
+import type { AdjRwResult } from "~/libs/adjrw-calculator"
+import { optimizeDiagnosis } from "~/libs/optimizer"
 
 export function RankingInterface() {
   const { selectedCodes, rankedCodes, setRankedCodes } = useDiagnosisStore()
   const [isRankingMode, setIsRankingMode] = useState(false)
-  const [adjRwScore, setAdjRwScore] = useState<ReturnType<typeof calculateAdjRw> | null>(null)
+  const [adjRwScore, setAdjRwScore] = useState<AdjRwResult | null>(null)
   const [hasManuallyReordered, setHasManuallyReordered] = useState(false)
 
   const sensors = useSensors(
@@ -74,15 +75,53 @@ export function RankingInterface() {
     })
   }
 
-  const handleCalculateAdjRw = () => {
-    if (rankedCodes.length > 0) {
-      const score = calculateAdjRw(rankedCodes)
-      console.log(score);
+  const handleCalculateAdjRw = async () => {
+    if (selectedCodes.length === 0) return
+
+    try {
+      const res = await optimizeDiagnosis({
+        availableCodes: selectedCodes.map((c) => c.code),
+        maxSecondaryDiagnoses: 12,
+      })
+
+      if (!res.success) {
+        toast({
+          title: "Optimization Failed",
+          description: res.errorMessage || "Unable to calculate AdjRw.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const order = [res.pdx, ...(res.sdx || [])].filter(Boolean) as string[]
+      const newRanked = order.map((code, idx) => {
+        const details = selectedCodes.find((c) => c.code === code)
+        return {
+          ...(details || { code, description: code, confidence: 1 }),
+          rank: idx + 1,
+        }
+      })
+      setRankedCodes(newRanked)
+
+      const score: AdjRwResult = {
+        estimatedAdjRw: res.estimatedAdjRw || 0,
+        confidenceLevel: parseFloat(res.confidenceLevel || "0") / 100,
+        primaryWeight: res.primaryWeight || 0,
+        secondaryWeight: res.secondaryWeight || 0,
+        complexityFactor: res.complexityFactor || 0,
+        recommendations: res.recommendations || [],
+      }
 
       setAdjRwScore(score)
       toast({
         title: "AdjRw Calculated",
         description: `Ranking efficiency score: ${(score.confidenceLevel * 100).toFixed(0)}%`,
+      })
+    } catch (err) {
+      toast({
+        title: "API Error",
+        description: "Failed to contact optimization service.",
+        variant: "destructive",
       })
     }
   }

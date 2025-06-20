@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
 function getBaseURL() {
-  const fallback = 'http://localhost:4000';
+  const fallback = 'http://localhost:8000';
   if (typeof window === 'undefined') {
     return process.env.API_ENDPOINT || fallback;
   }
