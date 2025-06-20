@@ -133,16 +133,16 @@ export function SelectedCodes() {
           </DialogContent>
         </Dialog>
 
-        {selectedCodes.length > 1 && (
+        {/* {selectedCodes.length > 1 && (
           <Button
             onClick={handleRecalculateRanking}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 text-white"
             variant={needsRecalculation ? "default" : "outline"}
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             {needsRecalculation ? "Recalculate Diagnosis Ranking" : "Auto-Rank Diagnoses"}
           </Button>
-        )}
+        )} */}
       </div>
 
       {selectedCodes.length > 0 && (

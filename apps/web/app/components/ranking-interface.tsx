@@ -128,7 +128,7 @@ export function RankingInterface() {
               Calculate AdjRw
             </Button>
           )}
-          {isRankingMode && (
+          {/* {isRankingMode && (
             <Button onClick={handleSaveRanking} variant="outline">
               Save Ranking
             </Button>
@@ -137,7 +137,7 @@ export function RankingInterface() {
             <Button onClick={() => setIsRankingMode(true)} variant="outline">
               Re-rank Diagnoses
             </Button>
-          )}
+          )} */}
         </div>
       </div>
 
