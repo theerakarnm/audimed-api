@@ -18,7 +18,7 @@ export function Header() {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-600 hover:text-[#115ad4] font-medium">
+            <a href="/dashboard" className="text-gray-600 hover:text-[#115ad4] font-medium">
               Dashboard
             </a>
             <a href="#" className="text-gray-600 hover:text-[#115ad4] font-medium">
