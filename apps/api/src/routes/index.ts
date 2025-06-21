@@ -8,12 +8,15 @@ import {
   optimizationRequestSchema,
   fileUploadSchema,
   adjRwRequestSchema,
+  icdSuggestionRequestSchema,
   type OptimizationRequestInput,
   type FileUploadInput,
   type AdjRwRequestInput,
+  type IcdSuggestionRequestInput,
 } from '../schemas';
-import type { OptimizationResponse, HealthCheckResponse, AdjRwResult } from '../types';
+import type { OptimizationResponse, HealthCheckResponse, AdjRwResult, IcdSuggestionResponse } from '../types';
 import { OptimizationService } from '../services/optimization.service';
+import { IcdService } from '../services/icd.service';
 import {
   ApiError,
   parseCsvToDataset,
@@ -24,6 +27,7 @@ import { API_CONFIG, CORS_CONFIG } from '../config';
 
 const app = new Hono();
 const optimizationService = new OptimizationService();
+const icdService = new IcdService();
 
 /**
  * Health check endpoint
@@ -204,6 +208,26 @@ app.post(
       }
 
       return c.json({ error: `Adj RW evaluation failed: ${String(error)}` }, 500);
+    }
+  }
+);
+
+/**
+ * Suggest ICD-10 and ICD-9 codes based on patient diagnosis
+ */
+app.post(
+  '/suggest-icd',
+  zValidator('json', icdSuggestionRequestSchema),
+  async (c) => {
+    try {
+      const { diagnosis } = c.req.valid('json') as IcdSuggestionRequestInput;
+      const result: IcdSuggestionResponse = await icdService.suggestCodes(diagnosis);
+      return c.json(result);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        return c.json({ error: error.message }, 500);
+      }
+      return c.json({ error: String(error) }, 500);
     }
   }
 );

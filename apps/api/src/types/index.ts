@@ -124,3 +124,16 @@ export interface HealthCheckResponse {
   timestamp: string;
   error?: string;
 }
+export interface CodeDescription {
+  code: string
+  description: string
+}
+
+export interface IcdSuggestionRequest {
+  diagnosis: string
+}
+
+export interface IcdSuggestionResponse {
+  icd10: CodeDescription[]
+  icd9: CodeDescription[]
+}
