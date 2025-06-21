@@ -18,13 +18,13 @@ export function Header() {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-600 hover:text-blue-600 font-medium">
+            <a href="#" className="text-gray-600 hover:text-[#115ad4] font-medium">
               Dashboard
             </a>
-            <a href="#" className="text-gray-600 hover:text-blue-600 font-medium">
+            <a href="#" className="text-gray-600 hover:text-[#115ad4] font-medium">
               History
             </a>
-            <a href="#" className="text-gray-600 hover:text-blue-600 font-medium">
+            <a href="#" className="text-gray-600 hover:text-[#115ad4] font-medium">
               Reports
             </a>
           </nav>

@@ -76,7 +76,7 @@ export function SelectedCodes() {
             key={code.code}
             variant="secondary"
             className={cn("px-3 py-2 text-sm font-medium", {
-              "bg-blue-100 text-blue-800 hover:bg-blue-200": code.category === "icd10",
+              "bg-primary-from/10 text-[#115ad4] hover:bg-primary-from/20": code.category === "icd10",
               "bg-orange-100 text-orange-800 hover:bg-orange-200": code.category === "icd9",
             })}
           >

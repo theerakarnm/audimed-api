@@ -97,7 +97,11 @@ export function PatientSearch({ onPatientSelected }: PatientSearchProps) {
             className="text-base"
           />
         </div>
-        <Button onClick={handleSearch} disabled={isSearching} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={handleSearch}
+          disabled={isSearching}
+          className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90"
+        >
           {isSearching ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -125,14 +129,14 @@ export function PatientSearch({ onPatientSelected }: PatientSearchProps) {
                 {searchResults.map((patient) => (
                   <Card
                     key={patient.patientId}
-                    className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500"
+                    className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-[#115ad4]"
                     onClick={() => handleSelectPatient(patient)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-blue-600" />
+                          <div className="w-10 h-10 bg-primary-from/10 rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-[#115ad4]" />
                           </div>
                           <div>
                             <h4 className="font-semibold text-gray-900">
@@ -141,7 +145,10 @@ export function PatientSearch({ onPatientSelected }: PatientSearchProps) {
                             <p className="text-sm text-gray-600">ID: {patient.patientId}</p>
                           </div>
                         </div>
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                        <Button
+                          size="sm"
+                          className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90"
+                        >
                           Select Patient
                         </Button>
                       </div>

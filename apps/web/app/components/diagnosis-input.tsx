@@ -47,7 +47,7 @@ export function DiagnosisInput() {
           placeholder="Enter patient symptoms or diagnosis description..."
           value={diagnosisText}
           onChange={(e) => setDiagnosisText(e.target.value)}
-          className="min-h-[200px] text-base resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="min-h-[200px] text-base resize-none focus:ring-2 focus:ring-[#115ad4] focus:border-transparent"
           maxLength={maxLength}
         />
         <div className="absolute bottom-3 right-3 text-sm text-gray-500">
@@ -59,7 +59,7 @@ export function DiagnosisInput() {
         <Button
           onClick={handleSearch}
           disabled={isSearching || !diagnosisText.trim()}
-          className="bg-blue-600 hover:bg-blue-700 px-8 py-2 text-base font-medium"
+          className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90 px-8 py-2 text-base font-medium"
           size="lg"
         >
           {isSearching ? (
