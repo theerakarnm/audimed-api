@@ -148,7 +148,7 @@ export function RankingInterface() {
     return (
       <div className="text-center py-8">
         <p className="text-gray-600 mb-4">Rank your selected diagnoses by priority (Primary diagnosis first)</p>
-        <Button onClick={handleStartRanking} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={handleCalculateAdjRw} className="bg-blue-600 hover:bg-blue-700">
           Start Ranking
         </Button>
       </div>
