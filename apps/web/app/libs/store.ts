@@ -1,10 +1,11 @@
 import { create } from "zustand"
-import type { IcdCode, DiagnosisState, PatientInfo } from "./types"
-import { mockIcdSearch } from "./mock-data"
+import type { IcdCode, DiagnosisState, PatientInfo, IcdSuggestionResponse } from "./types"
+import { apiGet } from "./http"
 
 export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   diagnosisText: "",
-  suggestions: [],
+  icd10Suggestions: [],
+  icd9Suggestions: [],
   selectedCodes: [],
   rankedCodes: [],
   patientInfo: {
@@ -21,10 +22,23 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   setDiagnosisText: (text: string) => set({ diagnosisText: text }),
 
   searchIcdCodes: async (text: string) => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const suggestions = mockIcdSearch(text)
-    set({ suggestions })
+    const data = await apiGet<IcdSuggestionResponse>('/suggest-icd', {
+      params: { diagnosis: text },
+    })
+
+    const icd10Suggestions: IcdCode[] = data.icd10.map((c) => ({
+      code: c.code,
+      description: c.description,
+      confidence: 1.0,
+    }))
+
+    const icd9Suggestions: IcdCode[] = data.icd9.map((c) => ({
+      code: c.code,
+      description: c.description,
+      confidence: 1.0,
+    }))
+
+    set({ icd10Suggestions, icd9Suggestions })
   },
 
   addSelectedCode: (code: IcdCode) => {
