@@ -47,4 +47,19 @@ export class IcdService {
       icd9: icd9Records as CodeDescription[],
     };
   }
+
+  async getIcd10Codes({ codes }: {
+    codes: string[],
+  }) {
+    if (!codes || codes.length === 0) {
+      throw new ApiError('No ICD-10 codes provided', 400);
+    }
+
+    const records = await db
+      .select({ code: icd10.code, description: icd10.description })
+      .from(icd10)
+      .where(inArray(icd10.code, codes));
+
+    return records as CodeDescription[];
+  }
 }

@@ -371,14 +371,14 @@ export function RankingInterface() {
             {rankedCodes.map((code, index) => (
               <SortableItem key={code.code} id={code.code}>
                 <Card
-                  className={`transition-all ${index === 0 ? "ring-2 ring-amber-400 bg-amber-50" : "hover:shadow-md"}`}
+                  className={`transition-all ${index === 0 ? "ring-2 ring-emerald-400 bg-emerald-50" : "hover:shadow-md"}`}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         <GripVertical className="w-5 h-5 text-gray-400 cursor-grab" />
                         <div
-                          className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${index === 0 ? "bg-amber-500 text-white" : "bg-gray-200 text-gray-700"
+                          className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${index === 0 ? "bg-emerald-500 text-white" : "bg-gray-200 text-gray-700"
                             }`}
                         >
                           {index === 0 ? <Crown className="w-4 h-4" /> : index + 1}
@@ -390,7 +390,7 @@ export function RankingInterface() {
                           <Badge variant="outline" className="font-mono">
                             {code.code}
                           </Badge>
-                          {index === 0 && <Badge className="bg-amber-500 text-white">Primary Diagnosis</Badge>}
+                          {index === 0 && <Badge className="bg-emerald-500 text-white">Primary Diagnosis</Badge>}
                           {adjRwScore && (
                             <Badge variant="secondary" className="text-xs">
                               Weight:{" "}

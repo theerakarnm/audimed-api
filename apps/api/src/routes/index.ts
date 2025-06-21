@@ -107,7 +107,34 @@ app.post(
         request.maxSecondaryDiagnoses,
       );
 
-      return c.json(result);
+      if (!result.sdx || !result.pdx) {
+        throw new ApiError('No secondary diagnoses found in optimization result', 400);
+      }
+
+      const Icd10Detail = await icdService.getIcd10Codes({
+        codes: [result.pdx?.code, ...result.sdx.map((code) => code.code)],
+      })
+
+      const Icd10Mapping: Record<string, string> = {}
+      for (const code of Icd10Detail) {
+        if (!request.availableCodes.includes(code.code)) continue;
+        Icd10Mapping[code.code] = code.description;
+
+      }
+
+      const formatResult = {
+        ...result,
+        pdx: {
+          ...result.pdx,
+          description: Icd10Mapping[result.pdx.code] || result.pdx.description,
+        },
+        sdx: result.sdx.map((sdx) => ({
+          ...sdx,
+          description: Icd10Mapping[sdx.code] || sdx.description,
+        })),
+      }
+
+      return c.json(formatResult);
     } catch (error) {
       if (error instanceof ApiError) {
         const response: OptimizationResponse = {
