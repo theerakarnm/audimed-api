@@ -10,8 +10,8 @@ import { useDiagnosisStore } from "~/libs/store"
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "AudiMed | Next level of Medical AI" },
+    { name: "description", content: "AudiMed | Next level of Medical AI" },
   ];
 };
 
