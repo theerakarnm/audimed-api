@@ -10,12 +10,14 @@ export class IcdService {
 
   async suggestCodes(diagnosis: string): Promise<IcdSuggestionResponse> {
     const prompt = `Given the patient diagnosis "${diagnosis}", suggest the most relevant ICD-10 and ICD-9 codes. ` +
-      `Respond ONLY with JSON in the format {"icd10": ["code1"], "icd9": ["codeA"]}`;
+      `Respond ONLY with JSON in the format {"icd10": ["code1"], "icd9": ["codeA"]} icd 10 codes suggested at least 10 code with out dot (.) and icd 9 codes suggested at least 10 code with out dot (.)`;
 
     const responseText = await this.deepSeekService.chatCompletion([
       { role: 'system', content: 'You are a medical coding assistant. Always reply with valid JSON.' },
       { role: 'user', content: prompt },
     ]);
+
+    console.log(responseText);
 
     const parsed = extractJsonFromResponse(responseText);
     if (!parsed || typeof parsed !== 'object') {
@@ -28,16 +30,16 @@ export class IcdService {
 
     const icd10Records = icd10Codes.length
       ? await db
-          .select({ code: icd10.code, description: icd10.description })
-          .from(icd10)
-          .where(inArray(icd10.code, icd10Codes))
+        .select({ code: icd10.code, description: icd10.description })
+        .from(icd10)
+        .where(inArray(icd10.code, icd10Codes))
       : [];
 
     const icd9Records = icd9Codes.length
       ? await db
-          .select({ code: icd9.code, description: icd9.description })
-          .from(icd9)
-          .where(inArray(icd9.code, icd9Codes))
+        .select({ code: icd9.code, description: icd9.description })
+        .from(icd9)
+        .where(inArray(icd9.code, icd9Codes))
       : [];
 
     return {

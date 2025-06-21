@@ -215,12 +215,12 @@ app.post(
 /**
  * Suggest ICD-10 and ICD-9 codes based on patient diagnosis
  */
-app.post(
+app.get(
   '/suggest-icd',
-  zValidator('json', icdSuggestionRequestSchema),
+  zValidator('query', icdSuggestionRequestSchema),
   async (c) => {
     try {
-      const { diagnosis } = c.req.valid('json') as IcdSuggestionRequestInput;
+      const { diagnosis } = c.req.valid('query') as IcdSuggestionRequestInput;
       const result: IcdSuggestionResponse = await icdService.suggestCodes(diagnosis);
       return c.json(result);
     } catch (error) {
