@@ -3,6 +3,7 @@ import type {
   DeepSeekOptimizationResult,
   OptimizationResponse,
   AdjRwResult,
+  IcdCode,
 } from '../types';
 import { DeepSeekService } from './deepseek.service';
 import { ApiError, prepareDatasetSummary, extractJsonFromResponse } from '../utils';
@@ -62,8 +63,8 @@ export class OptimizationService {
 
       return {
         success: true,
-        pdx: result.pdx,
-        sdx: result.sdx,
+        pdx: this.mapToIcdCode(result.pdx),
+        sdx: result.sdx.map((c) => this.mapToIcdCode(c)),
         estimatedAdjRw: result.estimatedAdjRw,
         confidenceLevel: result.confidenceLevel,
         primaryWeight: result.primaryWeight,
@@ -294,6 +295,14 @@ Respond ONLY with valid JSON in the format:
       complexityFactor: result.complexity_factor,
       recommendations: result.recommendations.filter((item): item is string => typeof item === 'string').slice(0, 3),
     };
+  }
+
+  private mapToIcdCode(code: string): IcdCode {
+    return {
+      code,
+      description: code,
+      confidence: 1,
+    }
   }
 
   /**

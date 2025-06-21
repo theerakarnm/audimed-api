@@ -3,6 +3,16 @@
  */
 
 /**
+ * ICD-10 code structure returned by the API
+ */
+export interface IcdCode {
+  code: string
+  description: string
+  confidence: number
+  category?: string
+}
+
+/**
  * Optimization request payload
  */
 export interface OptimizationRequest {
@@ -46,9 +56,9 @@ export interface OptimizationResponse extends AdjRwResult {
   /** Whether the optimization was successful */
   success: boolean;
   /** Selected primary diagnosis code */
-  pdx?: string;
+  pdx?: IcdCode;
   /** Selected secondary diagnosis codes */
-  sdx?: string[];
+  sdx?: IcdCode[];
   /** Error message if optimization failed */
   errorMessage?: string;
 }

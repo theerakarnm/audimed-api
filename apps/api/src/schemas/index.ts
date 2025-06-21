@@ -13,10 +13,17 @@ export const optimizationRequestSchema = z.object({
   maxSecondaryDiagnoses: z.number().int().min(1).max(15).optional().default(12),
 });
 
+const icdCodeSchema = z.object({
+  code: z.string(),
+  description: z.string(),
+  confidence: z.number(),
+  category: z.string().optional(),
+})
+
 export const optimizationResponseSchema = z.object({
   success: z.boolean(),
-  pdx: z.string().optional(),
-  sdx: z.array(z.string()).optional(),
+  pdx: icdCodeSchema.optional(),
+  sdx: z.array(icdCodeSchema).optional(),
   estimatedAdjRw: z.number().optional(),
   confidenceLevel: z.string().optional(),
   primaryWeight: z.number().optional(),
