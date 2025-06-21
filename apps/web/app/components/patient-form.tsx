@@ -164,7 +164,10 @@ export function PatientForm({ onPatientSaved }: PatientFormProps) {
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={handleSave}
+          className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90"
+        >
           <Save className="w-4 h-4 mr-2" />
           Save Patient Information
         </Button>

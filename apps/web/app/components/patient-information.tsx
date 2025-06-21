@@ -24,10 +24,10 @@ export function PatientInformation() {
   }
 
   return (
-    <Card className="bg-blue-50 border-blue-200">
+    <Card className="bg-primary-from/10 border-[#115ad4]/20">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center text-xl text-blue-900">
+          <CardTitle className="flex items-center text-xl text-[#115ad4]">
             <User className="w-6 h-6 mr-2" />
             Patient Information
           </CardTitle>

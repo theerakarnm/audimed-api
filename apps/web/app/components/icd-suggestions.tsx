@@ -33,7 +33,7 @@ export function IcdSuggestions() {
       {list.map((suggestion) => (
         <Card
           key={suggestion.code}
-          className={`transition-all hover:shadow-md ${isCodeSelected(suggestion.code) ? "ring-2 ring-green-500 bg-green-50" : "hover:border-blue-300"}`}
+          className={`transition-all hover:shadow-md ${isCodeSelected(suggestion.code) ? "ring-2 ring-green-500 bg-green-50" : "hover:border-[#115ad4]/50"}`}
         >
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-3">

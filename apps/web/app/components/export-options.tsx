@@ -103,7 +103,7 @@ export function ExportOptions() {
       <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={handleExportJSON}>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center text-lg">
-            <FileText className="w-5 h-5 mr-2 text-blue-600" />
+            <FileText className="w-5 h-5 mr-2 text-[#115ad4]" />
             JSON Data
           </CardTitle>
         </CardHeader>

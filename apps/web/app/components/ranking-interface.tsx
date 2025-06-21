@@ -182,7 +182,7 @@ export function RankingInterface() {
         <p className="text-gray-600 mb-4">Rank your selected diagnoses by priority (Primary diagnosis first)</p>
         <Button
           onClick={handleCalculateAdjRw}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90"
           disabled={isCalculating}
         >
           {isCalculating ? (
@@ -209,7 +209,7 @@ export function RankingInterface() {
           {shouldShowCalculateButton && (
             <Button
               onClick={handleCalculateAdjRw}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90"
               disabled={isCalculating}
             >
               {isCalculating ? (
@@ -240,15 +240,15 @@ export function RankingInterface() {
 
       {/* AdjRw Score Section - Only show when calculated */}
       {adjRwScore && (
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <Card className="bg-gradient-to-r from-primary-from/10 to-primary-to/10 border-[#115ad4]/20">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg text-blue-900">
+            <CardTitle className="flex items-center text-lg text-[#115ad4]">
               <TrendingUp className="w-5 h-5 mr-2" />
               AdjRw Score - Ranking Efficiency
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Info className="w-4 h-4 ml-2 text-blue-600 cursor-help" />
+                    <Info className="w-4 h-4 ml-2 text-[#115ad4] cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent className="max-w-sm">
                     <p>
@@ -263,7 +263,7 @@ export function RankingInterface() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="text-3xl font-bold text-blue-900">{adjRwScore.estimatedAdjRw.toFixed(2)}</div>
+                <div className="text-3xl font-bold text-[#115ad4]">{adjRwScore.estimatedAdjRw.toFixed(2)}</div>
                 <div>
                   <Badge className={`${getScoreColor(adjRwScore.confidenceLevel)} border-0`}>
                     {getScoreLabel(adjRwScore.confidenceLevel)}
@@ -277,28 +277,28 @@ export function RankingInterface() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-blue-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-[#115ad4]/20">
               <div className="text-center">
-                <p className="text-2xl font-semibold text-blue-900">{adjRwScore.primaryWeight.toFixed(2)}</p>
+                <p className="text-2xl font-semibold text-[#115ad4]">{adjRwScore.primaryWeight.toFixed(2)}</p>
                 <p className="text-sm text-gray-600">Primary Diagnosis Weight</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-semibold text-blue-900">{adjRwScore.secondaryWeight.toFixed(2)}</p>
+                <p className="text-2xl font-semibold text-[#115ad4]">{adjRwScore.secondaryWeight.toFixed(2)}</p>
                 <p className="text-sm text-gray-600">Secondary Diagnoses Weight</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-semibold text-blue-900">{adjRwScore.complexityFactor.toFixed(2)}</p>
+                <p className="text-2xl font-semibold text-[#115ad4]">{adjRwScore.complexityFactor.toFixed(2)}</p>
                 <p className="text-sm text-gray-600">Complexity Factor</p>
               </div>
             </div>
 
             {adjRwScore.recommendations.length > 0 && (
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
+              <div className="bg-white rounded-lg p-4 border border-[#115ad4]/20">
                 <h4 className="font-medium text-gray-900 mb-2">Optimization Recommendations:</h4>
                 <ul className="space-y-1">
                   {adjRwScore.recommendations.map((rec, index) => (
                     <li key={index} className="text-sm text-gray-700 flex items-start">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                      <span className="w-2 h-2 bg-[#115ad4] rounded-full mt-2 mr-2 flex-shrink-0"></span>
                       {rec}
                     </li>
                   ))}
@@ -311,7 +311,7 @@ export function RankingInterface() {
                 onClick={handleCalculateAdjRw}
                 variant="outline"
                 size="sm"
-                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                className="border-[#115ad4] text-[#115ad4] hover:bg-primary-from/10"
                 disabled={isCalculating}
               >
                 {isCalculating ? (
@@ -345,7 +345,7 @@ export function RankingInterface() {
               </div>
               <Button
                 onClick={handleCalculateAdjRw}
-                className="bg-purple-600 hover:bg-purple-700 mt-4"
+                className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90 mt-4"
                 disabled={isCalculating}
               >
                 {isCalculating ? (
