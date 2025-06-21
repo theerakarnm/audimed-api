@@ -59,3 +59,19 @@ export type OptimizationResponseOutput = z.infer<typeof optimizationResponseSche
 export type FileUploadInput = z.infer<typeof fileUploadSchema>;
 export type AdjRwRequestInput = z.infer<typeof adjRwRequestSchema>;
 export type EnvConfig = z.infer<typeof envSchema>;
+export const icdSuggestionRequestSchema = z.object({
+  diagnosis: z.string().min(1, 'Diagnosis is required'),
+});
+
+export const codeDescriptionSchema = z.object({
+  code: z.string(),
+  description: z.string(),
+});
+
+export const icdSuggestionResponseSchema = z.object({
+  icd10: z.array(codeDescriptionSchema),
+  icd9: z.array(codeDescriptionSchema),
+});
+
+export type IcdSuggestionRequestInput = z.infer<typeof icdSuggestionRequestSchema>;
+export type IcdSuggestionResponseOutput = z.infer<typeof icdSuggestionResponseSchema>;
