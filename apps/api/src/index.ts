@@ -6,6 +6,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import routes from './routes';
 import { env, API_CONFIG } from './config';
 import { ApiError } from './utils';
+import { cors } from 'hono/cors';
 
 const app = new Hono()
 
@@ -13,6 +14,15 @@ const app = new Hono()
 app.use('*', logger());
 app.use('*', prettyJSON());
 app.use('*', secureHeaders());
+app.use(
+  "*",
+  cors({
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    origin: process.env.CORE_ALLOW_LIST!.split(","),
+    allowMethods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }),
+);
 
 // Mount routes
 app.route('/', routes);

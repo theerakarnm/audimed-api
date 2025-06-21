@@ -25,10 +25,6 @@ import { API_CONFIG, CORS_CONFIG } from '../config';
 const app = new Hono();
 const optimizationService = new OptimizationService();
 
-// Apply CORS middleware
-// app.use('*', cors(CORS_CONFIG));
-app.use('*', cors());
-
 /**
  * Health check endpoint
  */

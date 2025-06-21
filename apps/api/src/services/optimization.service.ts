@@ -288,7 +288,7 @@ Respond ONLY with valid JSON in the format:
 
     return {
       estimatedAdjRw: result.estimated_adj_rw,
-      confidenceLevel: result.confidence_level.toString(),
+      confidenceLevel: result.confidence_level?.toString(),
       primaryWeight: result.primary_weight,
       secondaryWeight: result.secondary_weight,
       complexityFactor: result.complexity_factor,
