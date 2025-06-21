@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
 import { Progress } from "~/components/ui/progress"
-import { GripVertical, Crown, TrendingUp, Info, Calculator } from "lucide-react"
+import { Skeleton } from "~/components/ui/skeleton"
+import { GripVertical, Crown, TrendingUp, Info, Calculator, Loader2 } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip"
 import { useDiagnosisStore } from "~/libs/store"
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
@@ -21,6 +22,7 @@ export function RankingInterface() {
   const [isRankingMode, setIsRankingMode] = useState(false)
   const [adjRwScore, setAdjRwScore] = useState<AdjRwResult | null>(null)
   const [hasManuallyReordered, setHasManuallyReordered] = useState(false)
+  const [isCalculating, setIsCalculating] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -79,6 +81,8 @@ export function RankingInterface() {
   const handleCalculateAdjRw = async () => {
     if (selectedCodes.length === 0) return
 
+    setIsCalculating(true)
+
     try {
       const res = await optimizeDiagnosis({
         availableCodes: selectedCodes.map((c) => c.code),
@@ -121,6 +125,8 @@ export function RankingInterface() {
         description: "Failed to contact optimization service.",
         variant: "destructive",
       })
+    } finally {
+      setIsCalculating(false)
     }
   }
 
@@ -142,12 +148,34 @@ export function RankingInterface() {
   // 2. Either in ranking mode or ranking is complete
   const shouldShowCalculateButton = rankedCodes.length > 0 && !adjRwScore
 
+  if (isCalculating) {
+    const count = Math.min(selectedCodes.length || rankedCodes.length || 3, 12)
+    return (
+      <div className="space-y-3">
+        {Array.from({ length: count }).map((_, idx) => (
+          <Skeleton key={idx} className="h-16 w-full" />
+        ))}
+      </div>
+    )
+  }
+
   if (!isRankingMode && rankedCodes.length === 0) {
     return (
       <div className="text-center py-8">
         <p className="text-gray-600 mb-4">Rank your selected diagnoses by priority (Primary diagnosis first)</p>
-        <Button onClick={handleCalculateAdjRw} className="bg-blue-600 hover:bg-blue-700">
-          Start Ranking
+        <Button
+          onClick={handleCalculateAdjRw}
+          className="bg-blue-600 hover:bg-blue-700"
+          disabled={isCalculating}
+        >
+          {isCalculating ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Calculating...
+            </>
+          ) : (
+            <>Start Ranking</>
+          )}
         </Button>
       </div>
     )
@@ -162,9 +190,22 @@ export function RankingInterface() {
         </div>
         <div className="flex space-x-2">
           {shouldShowCalculateButton && (
-            <Button onClick={handleCalculateAdjRw} className="bg-purple-600 hover:bg-purple-700">
-              <Calculator className="w-4 h-4 mr-2" />
-              Calculate AdjRw
+            <Button
+              onClick={handleCalculateAdjRw}
+              className="bg-purple-600 hover:bg-purple-700"
+              disabled={isCalculating}
+            >
+              {isCalculating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Calculating...
+                </>
+              ) : (
+                <>
+                  <Calculator className="w-4 h-4 mr-2" />
+                  Calculate AdjRw
+                </>
+              )}
             </Button>
           )}
           {/* {isRankingMode && (
@@ -254,9 +295,19 @@ export function RankingInterface() {
                 variant="outline"
                 size="sm"
                 className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                disabled={isCalculating}
               >
-                <Calculator className="w-4 h-4 mr-2" />
-                Recalculate AdjRw
+                {isCalculating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Calculating...
+                  </>
+                ) : (
+                  <>
+                    <Calculator className="w-4 h-4 mr-2" />
+                    Recalculate AdjRw
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
@@ -275,9 +326,22 @@ export function RankingInterface() {
                   Click "Calculate AdjRw" to analyze your diagnosis ranking efficiency
                 </p>
               </div>
-              <Button onClick={handleCalculateAdjRw} className="bg-purple-600 hover:bg-purple-700 mt-4">
-                <Calculator className="w-4 h-4 mr-2" />
-                Calculate AdjRw Score
+              <Button
+                onClick={handleCalculateAdjRw}
+                className="bg-purple-600 hover:bg-purple-700 mt-4"
+                disabled={isCalculating}
+              >
+                {isCalculating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Calculating...
+                  </>
+                ) : (
+                  <>
+                    <Calculator className="w-4 h-4 mr-2" />
+                    Calculate AdjRw Score
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
