@@ -14,6 +14,7 @@ import { SortableItem } from "~/components/sortable-item"
 import { toast } from "~/hooks/use-toast"
 import type { AdjRwResult } from "~/libs/adjrw-calculator"
 import { optimizeDiagnosis } from "~/libs/optimizer"
+import type { IcdCode } from "~/libs/types"
 
 export function RankingInterface() {
   const { selectedCodes, rankedCodes, setRankedCodes } = useDiagnosisStore()
@@ -93,14 +94,11 @@ export function RankingInterface() {
         return
       }
 
-      const order = [res.pdx, ...(res.sdx || [])].filter(Boolean) as string[]
-      const newRanked = order.map((code, idx) => {
-        const details = selectedCodes.find((c) => c.code === code)
-        return {
-          ...(details || { code, description: code, confidence: 1 }),
-          rank: idx + 1,
-        }
-      })
+      const order = [res.pdx, ...(res.sdx || [])].filter(Boolean) as IcdCode[]
+      const newRanked = order.map((code, idx) => ({
+        ...code,
+        rank: idx + 1,
+      }))
       setRankedCodes(newRanked)
 
       const score: AdjRwResult = {

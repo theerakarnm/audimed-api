@@ -1,4 +1,5 @@
 import { apiPost } from './http'
+import type { IcdCode } from './types'
 
 export interface OptimizationRequest {
   availableCodes: string[]
@@ -7,8 +8,8 @@ export interface OptimizationRequest {
 
 export interface OptimizationResponse {
   success: boolean
-  pdx?: string
-  sdx?: string[]
+  pdx?: IcdCode
+  sdx?: IcdCode[]
   estimatedAdjRw?: number
   confidenceLevel?: string
   primaryWeight?: number
