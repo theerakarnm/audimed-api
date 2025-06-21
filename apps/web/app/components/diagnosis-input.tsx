@@ -27,12 +27,12 @@ export function DiagnosisInput() {
       await searchIcdCodes(diagnosisText)
       toast({
         title: "Search Complete",
-        description: "ICD-10 code suggestions have been generated.",
+        description: "ICD-10 and ICD-9 code suggestions have been generated.",
       })
     } catch (error) {
       toast({
         title: "Search Failed",
-        description: "Unable to generate ICD-10 suggestions. Please try again.",
+        description: "Unable to generate ICD code suggestions. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -65,12 +65,12 @@ export function DiagnosisInput() {
           {isSearching ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Searching ICD-10 Codes...
+              Searching ICD Codes...
             </>
           ) : (
             <>
               <Search className="w-5 h-5 mr-2" />
-              Search ICD-10 Codes
+              Search ICD Codes
             </>
           )}
         </Button>

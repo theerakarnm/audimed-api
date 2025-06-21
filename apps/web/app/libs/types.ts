@@ -5,6 +5,16 @@ export interface IcdCode {
   category?: string
 }
 
+export interface CodeDescription {
+  code: string
+  description: string
+}
+
+export interface IcdSuggestionResponse {
+  icd10: CodeDescription[]
+  icd9: CodeDescription[]
+}
+
 export interface PatientInfo {
   patientId: string
   firstName: string
@@ -18,7 +28,8 @@ export interface PatientInfo {
 
 export interface DiagnosisState {
   diagnosisText: string
-  suggestions: IcdCode[]
+  icd10Suggestions: IcdCode[]
+  icd9Suggestions: IcdCode[]
   selectedCodes: IcdCode[]
   rankedCodes: (IcdCode & { rank: number })[]
   patientInfo: PatientInfo
