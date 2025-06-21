@@ -24,6 +24,7 @@ export class OptimizationService {
   async optimizeDiagnosisCodes(
     datasetCases: DatasetCase[],
     availableCodes: string[],
+    availableOptionalCodes?: string[],
     maxSecondaryDiagnoses: number = 12
   ): Promise<OptimizationResponse> {
     try {
@@ -43,6 +44,7 @@ export class OptimizationService {
       const prompt = this.generateOptimizationPrompt(
         datasetSummary,
         availableCodes,
+        availableOptionalCodes,
         maxSecondaryDiagnoses
       );
 
@@ -93,40 +95,44 @@ export class OptimizationService {
   private generateOptimizationPrompt(
     datasetSummary: string,
     availableCodes: string[],
-    maxSecondaryDiagnoses: number
+    availableOptionalCodes: string[] | undefined,
+    maxSecondaryDiagnoses: number,
   ): string {
     return `
-You are an expert healthcare data analyst specializing in DRG optimization and maximizing adjusted Relative Weight (adj RW).
+    You are an expert healthcare data analyst specializing in DRG optimization and maximizing adjusted Relative Weight (adj RW).
 
-DATASET ANALYSIS - TOP PERFORMING CASES:
-${datasetSummary}
+    DATASET ANALYSIS - TOP PERFORMING CASES:
+    ${datasetSummary}
 
-AVAILABLE ICD-10 CODES TO SELECT FROM:
-${availableCodes.join(', ')}
+    AVAILABLE ICD-10 CODES TO SELECT FROM:
+    ${availableCodes.join(', ')}
 
-TASK: Analyze the dataset patterns to select the optimal combination that will yield the HIGHEST possible adj RW.
+    HERE IS ICD-9 FOR REFERENCE:
+    ${availableOptionalCodes?.join(', ') ?? 'N/A'}
 
-ANALYSIS REQUIREMENTS:
-1. Identify which diagnosis combinations correlate with highest adj RW values
-2. Look for synergistic effects between primary and secondary diagnoses
-3. Consider complexity factors that increase reimbursement
-4. Focus purely on maximizing adj RW (ignore clinical plausibility)
+    TASK: Analyze the dataset patterns to select the optimal combination that will yield the HIGHEST possible adj RW.
 
-SELECTION CRITERIA:
-- Choose 1 PRIMARY diagnosis (pdx) from available codes
-- Choose up to ${maxSecondaryDiagnoses} SECONDARY diagnoses from available codes
-- Aim for estimated adj RW > 10.0
+    ANALYSIS REQUIREMENTS:
+    1. Identify which diagnosis combinations correlate with highest adj RW values
+    2. Look for synergistic effects between primary and secondary diagnoses
+    3. Consider complexity factors that increase reimbursement
+    4. Focus purely on maximizing adj RW (ignore clinical plausibility)
 
-RESPOND IN VALID JSON FORMAT ONLY:
-{
-  "pdx": "selected_primary_diagnosis_code",
-  "sdx": ["sdx1_code", "sdx2_code", "sdx3_code", "sdx4_code", "sdx5_code", "sdx6_code", "sdx7_code", "sdx8_code", "sdx9_code", "sdx10_code", "sdx11_code", "sdx12_code"],
-  "estimated_adj_rw": 0.0,
-  "confidence_level": "1-100",
-  "primary_weight": 0.0,
-  "secondary_weight": 0.0,
-  "complexity_factor": 0.0,
-  "recommendations": ["Rec 1", "Rec 2", "Rec 3"]
+    SELECTION CRITERIA:
+    - Choose 1 PRIMARY diagnosis (pdx) from available codes
+    - Choose up to ${maxSecondaryDiagnoses} SECONDARY diagnoses from available codes
+    - Aim for estimated adj RW > 10.0
+
+    RESPOND IN VALID JSON FORMAT ONLY:
+    {
+      "pdx": "selected_primary_diagnosis_code",
+      "sdx": ["sdx1_code", "sdx2_code", "sdx3_code", "sdx4_code", "sdx5_code", "sdx6_code", "sdx7_code", "sdx8_code", "sdx9_code", "sdx10_code", "sdx11_code"],
+      "estimated_adj_rw": 0.0,
+      "confidence_level": "1-100",
+      "primary_weight": 0.0,
+      "secondary_weight": 0.0,
+      "complexity_factor": 0.0,
+      "recommendations": ["Rec 1", "Rec 2", "Rec 3"]
 }`;
   }
 

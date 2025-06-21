@@ -10,6 +10,7 @@ import { X, Plus, RefreshCw } from "lucide-react"
 import { useDiagnosisStore } from "~/libs/store"
 import { useState } from "react"
 import { toast } from "~/hooks/use-toast"
+import { cn } from "~/libs/utils"
 
 export function SelectedCodes() {
   const { selectedCodes, removeSelectedCode, addSelectedCode, recalculateRanking, rankedCodes } = useDiagnosisStore()
@@ -74,7 +75,10 @@ export function SelectedCodes() {
           <Badge
             key={code.code}
             variant="secondary"
-            className="px-3 py-2 text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200"
+            className={cn("px-3 py-2 text-sm font-medium", {
+              "bg-blue-100 text-blue-800 hover:bg-blue-200": code.category === "icd10",
+              "bg-orange-100 text-orange-800 hover:bg-orange-200": code.category === "icd9",
+            })}
           >
             <span className="font-mono mr-2">{code.code}</span>
             <span className="mr-2">{code.description}</span>

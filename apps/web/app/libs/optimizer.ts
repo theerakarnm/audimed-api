@@ -3,6 +3,7 @@ import type { IcdCode } from './types'
 
 export interface OptimizationRequest {
   availableCodes: string[]
+  availableOptionalCodes?: string[]
   maxSecondaryDiagnoses?: number
 }
 

@@ -127,6 +127,7 @@ export interface HealthCheckResponse {
 export interface CodeDescription {
   code: string
   description: string
+  category: string
 }
 
 export interface IcdSuggestionRequest {

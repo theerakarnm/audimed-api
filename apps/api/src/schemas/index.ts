@@ -9,6 +9,10 @@ export const optimizationRequestSchema = z.object({
     .array(z.string().min(1, 'Code cannot be empty'))
     .min(2, 'Need at least 2 available codes')
     .max(100, 'Too many codes provided'),
+  availableOptionalCodes: z
+    .array(z.string().min(1, 'Code cannot be empty'))
+    .max(100, 'Too many optional codes provided')
+    .optional(),
   datasetCsv: z.string().optional(),
   maxSecondaryDiagnoses: z.number().int().min(1).max(15).optional().default(12),
 });

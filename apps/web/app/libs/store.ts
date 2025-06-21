@@ -30,12 +30,14 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
       code: c.code,
       description: c.description,
       confidence: 1.0,
+      category: "icd10",
     }))
 
     const icd9Suggestions: IcdCode[] = data.icd9.map((c) => ({
       code: c.code,
       description: c.description,
       confidence: 1.0,
+      category: "icd9",
     }))
 
     set({ icd10Suggestions, icd9Suggestions })
@@ -44,6 +46,8 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   addSelectedCode: (code: IcdCode) => {
     const { selectedCodes } = get()
     if (!selectedCodes.find((selected) => selected.code === code.code)) {
+      console.log(code);
+
       set({ selectedCodes: [...selectedCodes, code] })
     }
   },

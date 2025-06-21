@@ -83,9 +83,26 @@ export function RankingInterface() {
 
     setIsCalculating(true)
 
+    console.log(selectedCodes);
+
+
     try {
+      const availableCodes: Record<'availableCodes' | 'availableOptionalCodes', string[]> = {
+        availableCodes: [],
+        availableOptionalCodes: [],
+      }
+
+      for (const code of selectedCodes) {
+        if (code.category === 'icd10') {
+          availableCodes.availableCodes.push(code.code)
+        }
+        else if (code.category === 'icd9') {
+          availableCodes.availableOptionalCodes.push(code.code)
+        }
+      }
+
       const res = await optimizeDiagnosis({
-        availableCodes: selectedCodes.map((c) => c.code),
+        ...availableCodes,
         maxSecondaryDiagnoses: 12,
       })
 

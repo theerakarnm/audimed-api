@@ -48,7 +48,7 @@ export default function Index() {
           {/* Selected Codes - Only show if codes are selected */}
           {isPatientInfoComplete() && selectedCodes.length > 0 && (
             <section className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Selected ICD-10 Codes</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Selected ICD-10 and ICD-9 Codes</h2>
               <SelectedCodes />
             </section>
           )}

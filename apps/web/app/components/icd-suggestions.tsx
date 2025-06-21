@@ -77,8 +77,8 @@ export function IcdSuggestions() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h3 className="text-xl font-semibold mb-4">ICD-10 Codes</h3>
+      <div className="border-b pb-6 mb-6">
+        <h3 className="text-xl text-gray-500 font-semibold mb-4">ICD-10 Codes</h3>
         {icd10Suggestions.length ? (
           renderGrid(icd10Suggestions)
         ) : (
@@ -86,7 +86,7 @@ export function IcdSuggestions() {
         )}
       </div>
       <div>
-        <h3 className="text-xl font-semibold mb-4">ICD-9 Codes</h3>
+        <h3 className="text-xl text-gray-500 font-semibold mb-4">ICD-9 Codes</h3>
         {icd9Suggestions.length ? (
           renderGrid(icd9Suggestions)
         ) : (

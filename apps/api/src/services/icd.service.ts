@@ -1,7 +1,7 @@
 import { DeepSeekService } from './deepseek.service';
 import { db } from '../utils/db';
 import { icd10, icd9 } from '../utils/db/schema';
-import { inArray } from 'drizzle-orm';
+import { inArray, sql } from 'drizzle-orm';
 import { extractJsonFromResponse, ApiError } from '../utils';
 import type { CodeDescription, IcdSuggestionResponse } from '../types';
 
@@ -30,14 +30,14 @@ export class IcdService {
 
     const icd10Records = icd10Codes.length
       ? await db
-        .select({ code: icd10.code, description: icd10.description })
+        .select({ code: icd10.code, description: icd10.description, category: sql`'icd10' as category` })
         .from(icd10)
         .where(inArray(icd10.code, icd10Codes))
       : [];
 
     const icd9Records = icd9Codes.length
       ? await db
-        .select({ code: icd9.code, description: icd9.description })
+        .select({ code: icd9.code, description: icd9.description, category: sql`'icd9' as category` })
         .from(icd9)
         .where(inArray(icd9.code, icd9Codes))
       : [];

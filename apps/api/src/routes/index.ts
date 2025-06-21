@@ -103,7 +103,8 @@ app.post(
       const result = await optimizationService.optimizeDiagnosisCodes(
         datasetCases,
         request.availableCodes,
-        request.maxSecondaryDiagnoses
+        request.availableOptionalCodes,
+        request.maxSecondaryDiagnoses,
       );
 
       return c.json(result);
