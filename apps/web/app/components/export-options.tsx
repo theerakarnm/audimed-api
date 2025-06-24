@@ -5,12 +5,48 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { FileText, Download, Printer } from "lucide-react"
 import { useDiagnosisStore } from "~/libs/store"
 import { toast } from "~/hooks/use-toast"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 export function ExportOptions() {
-  const { rankedCodes, diagnosisText } = useDiagnosisStore()
+  const { rankedCodes, diagnosisText, patientInfo } = useDiagnosisStore()
 
   const handleExportPDF = () => {
-    // Mock PDF export
+    const doc = new jsPDF()
+
+    doc.setFontSize(16)
+    doc.text("Diagnosis Report", 10, 10)
+
+    doc.setFontSize(12)
+    const name = `${patientInfo.firstName} ${patientInfo.lastName}`.trim()
+    if (name) {
+      doc.text(`Patient: ${name}`, 10, 20)
+    }
+    if (patientInfo.patientId) {
+      doc.text(`ID: ${patientInfo.patientId}`, 10, 27)
+    }
+
+    if (diagnosisText) {
+      doc.text("Diagnosis:", 10, 37)
+      doc.text(doc.splitTextToSize(diagnosisText, 180), 10, 44)
+    }
+
+    const startY = diagnosisText ? 60 : 30
+
+    autoTable(doc, {
+      startY,
+      head: [["Rank", "Code", "Description", "Category", "Primary"]],
+      body: rankedCodes.map((code) => [
+        code.rank,
+        code.code,
+        code.description,
+        code.category || "",
+        code.rank === 1 ? "Yes" : "No",
+      ]),
+    })
+
+    doc.save(`diagnosis-${new Date().toISOString().split("T")[0]}.pdf`)
+
     toast({
       title: "PDF Export",
       description: "Diagnosis report has been exported as PDF.",
@@ -21,6 +57,7 @@ export function ExportOptions() {
     const exportData = {
       timestamp: new Date().toISOString(),
       diagnosisText,
+      patientInfo,
       rankedCodes: rankedCodes.map((code) => ({
         rank: code.rank,
         code: code.code,
@@ -47,7 +84,13 @@ export function ExportOptions() {
   }
 
   const handleExportCSV = () => {
-    const csvHeaders = ["Rank", "ICD-10 Code", "Description", "Category", "Primary"]
+    const csvHeaders = [
+      "Rank",
+      "ICD-10 Code",
+      "Description",
+      "Category",
+      "Primary",
+    ]
     const csvRows = rankedCodes.map((code) => [
       code.rank,
       code.code,
@@ -56,7 +99,21 @@ export function ExportOptions() {
       code.rank === 1 ? "Yes" : "No",
     ])
 
-    const csvContent = [csvHeaders, ...csvRows].map((row) => row.join(",")).join("\n")
+    const patientInfoRows = [
+      [],
+      ["Patient ID", patientInfo.patientId],
+      ["First Name", patientInfo.firstName],
+      ["Last Name", patientInfo.lastName],
+      ["Date of Birth", patientInfo.dateOfBirth?.toLocaleDateString() || ""],
+      ["Gender", patientInfo.gender],
+      ["MRN", patientInfo.mrn],
+    ]
+
+    const csvContent = [
+      ...patientInfoRows.map((row) => row.join(",")),
+      csvHeaders.join(","),
+      ...csvRows.map((row) => row.join(",")),
+    ].join("\n")
 
     const blob = new Blob([csvContent], { type: "text/csv" })
     const url = URL.createObjectURL(blob)
