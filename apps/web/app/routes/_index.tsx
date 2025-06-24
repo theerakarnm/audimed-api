@@ -8,6 +8,12 @@ import { Header } from "~/components/header"
 import { PatientInformation } from "~/components/patient-information"
 import { ProgressStepper } from "~/components/progress-stepper"
 import { useDiagnosisStore } from "~/libs/store"
+import {
+  LoadingManager,
+  MiniWordGame,
+  AiFactsCarousel,
+  CustomSpinner,
+} from "~/components/interactive-loading"
 
 export const meta: MetaFunction = () => {
   return [
@@ -22,6 +28,14 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+
+      <LoadingManager
+        interactiveElements={[
+          { type: 'game', component: MiniWordGame },
+          { type: 'info', component: AiFactsCarousel },
+          { type: 'customization', component: CustomSpinner },
+        ]}
+      />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <ProgressStepper />

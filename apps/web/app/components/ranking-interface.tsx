@@ -16,6 +16,7 @@ import { toast } from "~/hooks/use-toast"
 import type { AdjRwResult } from "~/libs/adjrw-calculator"
 import { optimizeDiagnosis } from "~/libs/optimizer"
 import type { IcdCode } from "~/libs/types"
+import { useInteractiveLoading } from "~/hooks/use-interactive-loading"
 
 export function RankingInterface() {
   const { selectedCodes, rankedCodes, setRankedCodes } = useDiagnosisStore()
@@ -23,6 +24,7 @@ export function RankingInterface() {
   const [adjRwScore, setAdjRwScore] = useState<AdjRwResult | null>(null)
   const [hasManuallyReordered, setHasManuallyReordered] = useState(false)
   const [isCalculating, setIsCalculating] = useState(false)
+  const { start, finish, setLoading } = useInteractiveLoading()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -82,6 +84,8 @@ export function RankingInterface() {
     if (selectedCodes.length === 0) return
 
     setIsCalculating(true)
+    start()
+    setLoading({ stage: 'processing' })
 
     console.log(selectedCodes);
 
@@ -143,6 +147,7 @@ export function RankingInterface() {
         variant: "destructive",
       })
     } finally {
+      finish()
       setIsCalculating(false)
     }
   }

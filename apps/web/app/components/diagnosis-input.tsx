@@ -6,11 +6,13 @@ import { Button } from "~/components/ui/button"
 import { Search, Loader2 } from "lucide-react"
 import { useDiagnosisStore } from "~/libs/store"
 import { toast } from "~/hooks/use-toast"
+import { useInteractiveLoading } from "~/hooks/use-interactive-loading"
 
 export function DiagnosisInput() {
   const { diagnosisText, setDiagnosisText, searchIcdCodes } = useDiagnosisStore()
   const [isSearching, setIsSearching] = useState(false)
   const maxLength = 2000
+  const { start, finish, setLoading } = useInteractiveLoading()
 
   const handleSearch = async () => {
     if (!diagnosisText.trim()) {
@@ -23,6 +25,8 @@ export function DiagnosisInput() {
     }
 
     setIsSearching(true)
+    start()
+    setLoading({ stage: 'processing' })
     try {
       await searchIcdCodes(diagnosisText)
       toast({
@@ -36,6 +40,7 @@ export function DiagnosisInput() {
         variant: "destructive",
       })
     } finally {
+      finish()
       setIsSearching(false)
     }
   }
