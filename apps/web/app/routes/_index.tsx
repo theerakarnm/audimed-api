@@ -6,6 +6,7 @@ import { RankingInterface } from "~/components/ranking-interface"
 import { ExportOptions } from "~/components/export-options"
 import { Header } from "~/components/header"
 import { PatientInformation } from "~/components/patient-information"
+import { ProgressStepper } from "~/components/progress-stepper"
 import { useDiagnosisStore } from "~/libs/store"
 
 export const meta: MetaFunction = () => {
@@ -23,6 +24,7 @@ export default function Index() {
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
+        <ProgressStepper />
         <div className="space-y-8">
           {/* Patient Information Section - Always First */}
           <section>
