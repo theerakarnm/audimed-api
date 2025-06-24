@@ -252,6 +252,8 @@ app.get(
       const result: IcdSuggestionResponse = await icdService.suggestCodes(diagnosis);
       return c.json(result);
     } catch (error) {
+      console.error(error);
+
       if (error instanceof ApiError) {
         return c.json({ error: error.message }, 500);
       }
