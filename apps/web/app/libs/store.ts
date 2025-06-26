@@ -22,25 +22,31 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   setDiagnosisText: (text: string) => set({ diagnosisText: text }),
 
   searchIcdCodes: async (text: string) => {
-    const data = await apiGet<IcdSuggestionResponse>('/suggest-icd', {
-      params: { diagnosis: text },
-    })
+    try {
+      const data = await apiGet<IcdSuggestionResponse>("/suggest-icd", {
+        params: { diagnosis: text },
+      })
 
-    const icd10Suggestions: IcdCode[] = data.icd10.map((c) => ({
-      code: c.code,
-      description: c.description,
-      confidence: 1.0,
-      category: "icd10",
-    }))
+      const icd10Suggestions: IcdCode[] = (data.icd10 ?? []).map((c) => ({
+        code: c.code,
+        description: c.description,
+        confidence: 1.0,
+        category: "icd10",
+      }))
 
-    const icd9Suggestions: IcdCode[] = data.icd9.map((c) => ({
-      code: c.code,
-      description: c.description,
-      confidence: 1.0,
-      category: "icd9",
-    }))
+      const icd9Suggestions: IcdCode[] = (data.icd9 ?? []).map((c) => ({
+        code: c.code,
+        description: c.description,
+        confidence: 1.0,
+        category: "icd9",
+      }))
 
-    set({ icd10Suggestions, icd9Suggestions })
+      set({ icd10Suggestions, icd9Suggestions })
+    } catch (error) {
+      console.error("Failed to fetch ICD suggestions", error)
+      set({ icd10Suggestions: [], icd9Suggestions: [] })
+      throw error
+    }
   },
 
   addSelectedCode: (code: IcdCode) => {
