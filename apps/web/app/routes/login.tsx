@@ -6,6 +6,7 @@ import { Label } from '~/components/ui/label';
 import { useToast } from '~/components/ui/use-toast';
 import axios from 'axios';
 import { LoginForm } from '~/components/login-form';
+import { apiPost } from '~/libs/http';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function LoginPage() {
     password: string;
   }) => {
     try {
-      const response = await axios.post('/api/auth/login', { username, password });
+      const response = await apiPost('/api/auth/login', { username, password });
       const { accessToken, refreshToken } = response.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);

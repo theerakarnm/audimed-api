@@ -27,7 +27,7 @@ app.use(
 
 // Mount routes
 app.route('/', routes);
-app.route('/auth', authRoutes);
+app.route('/api/auth', authRoutes);
 
 // Global error handler
 app.onError((error, c) => {
