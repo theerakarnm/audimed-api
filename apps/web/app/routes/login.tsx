@@ -18,8 +18,12 @@ export default function LoginPage() {
     password: string;
   }) => {
     try {
-      const response = await apiPost('/api/auth/login', { username, password });
-      const { accessToken, refreshToken } = response.data;
+      const response = await apiPost<{
+        accessToken: string;
+        refreshToken: string;
+      }>('/api/auth/login', { username, password });
+
+      const { accessToken, refreshToken } = response;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
       toast({ title: 'Login Successful' });
