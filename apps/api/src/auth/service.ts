@@ -5,7 +5,7 @@ import { comparePassword } from './utils/bcrypt';
 import { signAccessToken, signRefreshToken } from './utils/jwt';
 
 export const loginService = async (body: any) => {
-  const user = await db.select().from(users).where(eq(users.username, body.username)).get();
+  const [user] = await db.select().from(users).where(eq(users.username, body.username)).limit(1);
 
   if (!user) {
     return null;

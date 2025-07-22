@@ -16,7 +16,9 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Index() {
+import { withAuth } from '~/components/with-auth';
+
+function Index() {
   const { diagnosisText, selectedCodes, rankedCodes, isPatientInfoComplete } = useDiagnosisStore()
 
   return (
@@ -75,3 +77,5 @@ export default function Index() {
     </div>
   )
 }
+
+export default withAuth(Index);

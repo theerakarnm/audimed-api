@@ -13,7 +13,9 @@ import { dashboardStats, monthlyCases } from "~/libs/dashboard-data";
 
 export const meta = () => [{ title: "AudiMed | Dashboard" }];
 
-export default function Dashboard() {
+import { withAuth } from '~/components/with-auth';
+
+function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -54,3 +56,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default withAuth(Dashboard);
