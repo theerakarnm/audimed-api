@@ -66,6 +66,9 @@ export type EnvConfig = z.infer<typeof envSchema>;
 export const icdSuggestionRequestSchema = z.object({
   diagnosis: z.string().min(1, 'Diagnosis is required'),
 });
+export const icdSuggestionIcd9RequestSchema = z.object({
+  icd10Codes: z.string().min(1, 'ICD-10 codes are required').transform((val) => val.split(',').map(code => code.trim())),
+});
 
 export const codeDescriptionSchema = z.object({
   code: z.string(),

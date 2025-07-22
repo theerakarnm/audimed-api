@@ -13,6 +13,7 @@ import {
   type FileUploadInput,
   type AdjRwRequestInput,
   type IcdSuggestionRequestInput,
+  icdSuggestionIcd9RequestSchema,
 } from '../schemas';
 import type { OptimizationResponse, HealthCheckResponse, AdjRwResult, IcdSuggestionResponse } from '../types';
 import { OptimizationService } from '../services/optimization.service';
@@ -250,6 +251,29 @@ app.get(
     try {
       const { diagnosis } = c.req.valid('query') as IcdSuggestionRequestInput;
       const result: IcdSuggestionResponse = await icdService.suggestCodes(diagnosis);
+
+      return c.json(result);
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof ApiError) {
+        return c.json({ error: error.message }, 500);
+      }
+      return c.json({ error: String(error) }, 500);
+    }
+  }
+);
+
+/**
+ * Suggest ICD-10 and ICD-9 codes based on patient diagnosis
+ */
+app.get(
+  '/suggest-icd-9',
+  zValidator('query', icdSuggestionIcd9RequestSchema),
+  async (c) => {
+    try {
+      const { icd10Codes } = c.req.valid('query');
+      const result = await icdService.suggestCodesIcd9(icd10Codes);
       return c.json(result);
     } catch (error) {
       console.error(error);

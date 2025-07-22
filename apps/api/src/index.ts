@@ -18,8 +18,7 @@ app.use('*', secureHeaders());
 app.use(
   "*",
   cors({
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    origin: process.env.CORE_ALLOW_LIST!.split(","),
+    origin: process.env.CORE_ALLOW_LIST?.split(",") || ["http://localhost:3000", "http://localhost:5173"],
     allowMethods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
     credentials: true,
   }),

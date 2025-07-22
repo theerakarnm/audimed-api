@@ -136,5 +136,4 @@ export interface IcdSuggestionRequest {
 
 export interface IcdSuggestionResponse {
   icd10: CodeDescription[]
-  icd9: CodeDescription[]
 }

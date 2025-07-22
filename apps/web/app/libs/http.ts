@@ -13,10 +13,11 @@ function getBaseURL() {
 const api = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
+  timeout: 30000, // 30 seconds
 });
 
 api.interceptors.request.use(
-  (config) => { 
+  (config) => {
     const token = safeLocalStorage.getItem('accessToken');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;

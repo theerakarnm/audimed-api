@@ -28,6 +28,7 @@ export class DeepSeekService {
       temperature?: number;
       maxTokens?: number;
       timeout?: number;
+      response_format?: 'json_object' | 'text';
     } = {}
   ): Promise<string> {
     const {
@@ -35,6 +36,7 @@ export class DeepSeekService {
       temperature = 0.1,
       maxTokens = 4000,
       timeout = 120000,
+      response_format = 'text',
     } = options;
 
     const url = `${this.baseUrl}/chat/completions`;
@@ -48,6 +50,7 @@ export class DeepSeekService {
       messages,
       temperature,
       max_tokens: maxTokens,
+      response_format: { type: response_format },
     };
 
     try {

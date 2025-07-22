@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import type { IcdCode, DiagnosisState, PatientInfo, IcdSuggestionResponse } from "./types"
 import { apiGet } from "./http"
+import { icd10 } from '../../../api/src/utils/db/schema';
 
 export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   diagnosisText: "",
@@ -27,6 +28,9 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
         params: { diagnosis: text },
       })
 
+      console.log({ data });
+
+
       const icd10Suggestions: IcdCode[] = (data.icd10 ?? []).map((c) => ({
         code: c.code,
         description: c.description,
@@ -34,14 +38,23 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
         category: "icd10",
       }))
 
-      const icd9Suggestions: IcdCode[] = (data.icd9 ?? []).map((c) => ({
+      set({ icd10Suggestions })
+
+      const dataIcd9 = await apiGet<IcdCode[]>("/suggest-icd-9", {
+        params: { icd10Codes: icd10Suggestions.map((c) => c.code).join(",") },
+      })
+
+      console.log({ dataIcd9 });
+
+
+      const icd9Suggestions: IcdCode[] = (dataIcd9 ?? []).map((c) => ({
         code: c.code,
         description: c.description,
         confidence: 1.0,
         category: "icd9",
       }))
 
-      set({ icd10Suggestions, icd9Suggestions })
+      set({ icd9Suggestions })
     } catch (error) {
       console.error("Failed to fetch ICD suggestions", error)
       set({ icd10Suggestions: [], icd9Suggestions: [] })
