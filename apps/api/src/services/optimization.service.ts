@@ -121,7 +121,8 @@ export class OptimizationService {
     SELECTION CRITERIA:
     - Choose 1 PRIMARY diagnosis (pdx) from available codes
     - Choose up to ${maxSecondaryDiagnoses} SECONDARY diagnoses from available codes without duplicates
-    - Aim for estimated adj RW > 10.0
+    - Aim for estimated adj RW > 15.0
+    - Select only codes that are available in the provided list
 
     RESPOND IN VALID JSON FORMAT ONLY:
     {

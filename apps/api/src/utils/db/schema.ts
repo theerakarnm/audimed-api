@@ -10,6 +10,13 @@ const commonColumns = {
   deletedAt: timestamp("deleted_at", { precision: 3, mode: "date" }),
 };
 
+export const users = pgTable("users", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  ...commonColumns,
+});
+
 /** Group Chat table: to group files by a chat session or conversation */
 export const icd10 = pgTable("icd_10", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

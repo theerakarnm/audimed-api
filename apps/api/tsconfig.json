@@ -1,7 +1,16 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "strict": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+    "jsxImportSource": "hono/jsx",
+    "outDir": "./dist", // Specify your output directory here
+    "rootDir": "./src" // Optional: specify the root directory of your source files
+  },
+  "include": ["src/**/*.ts"], // Specify the folder to include for compilation
+  "exclude": ["node_modules"]
 }
