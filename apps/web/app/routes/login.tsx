@@ -1,17 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from '@remix-run/react';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
 import { useToast } from '~/components/ui/use-toast';
-import axios from 'axios';
 import { LoginForm } from '~/components/login-form';
 import { apiPost } from '~/libs/http';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
-
 
   const handleLogin = async ({ username, password }: {
     username: string;
