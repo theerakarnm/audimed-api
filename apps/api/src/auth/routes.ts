@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { loginController } from './controller';
+import { loginController, refreshController } from './controller';
 import { rateLimiter } from 'hono-rate-limiter';
 
 const authRoutes = new Hono();
@@ -15,5 +15,6 @@ const limiter = rateLimiter({
 
 authRoutes.use('/login', limiter);
 authRoutes.route('/login', loginController);
+authRoutes.route('/refresh', refreshController);
 
 export default authRoutes;

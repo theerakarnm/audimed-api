@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { safeLocalStorage } from './utils';
 
 function getBaseURL() {
   const fallback = 'http://localhost:8000';
@@ -13,6 +14,49 @@ const api = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
 });
+
+api.interceptors.request.use(
+  (config) => {
+    const token = safeLocalStorage.getItem('accessToken');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshToken = safeLocalStorage.getItem('refreshToken');
+        if (refreshToken) {
+          const response = await axios.post('/api/auth/refresh', { refreshToken });
+          const { accessToken } = response.data;
+          safeLocalStorage.setItem('accessToken', accessToken);
+          api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        safeLocalStorage.removeItem('accessToken');
+        safeLocalStorage.removeItem('refreshToken');
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export function setAuthToken(token: string | null) {
   if (token) {

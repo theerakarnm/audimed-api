@@ -2,7 +2,7 @@ import { db } from '../utils/db';
 import { users } from '../utils/db/schema';
 import { eq } from 'drizzle-orm';
 import { comparePassword } from './utils/bcrypt';
-import { signAccessToken, signRefreshToken } from './utils/jwt';
+import { signAccessToken, signRefreshToken, verifyToken } from './utils/jwt';
 
 export const loginService = async (body: any) => {
   const [user] = await db.select().from(users).where(eq(users.username, body.username)).limit(1);
@@ -21,4 +21,16 @@ export const loginService = async (body: any) => {
   const refreshToken = await signRefreshToken({ id: user.id });
 
   return { accessToken, refreshToken };
+};
+
+export const refreshService = async (refreshToken: string) => {
+  const decoded = await verifyToken(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+
+  if (!decoded) {
+    return null;
+  }
+
+  const accessToken = await signAccessToken({ id: decoded.id });
+
+  return { accessToken };
 };
