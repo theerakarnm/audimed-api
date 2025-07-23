@@ -33,6 +33,10 @@ export interface DiagnosisState {
   selectedCodes: IcdCode[]
   rankedCodes: (IcdCode & { rank: number })[]
   patientInfo: PatientInfo
+  isSearchingIcd10: boolean
+  isSearchingIcd9: boolean
+  icd10Error: string | null
+  icd9Error: string | null
 
   setDiagnosisText: (text: string) => void
   searchIcdCodes: (text: string) => Promise<void>

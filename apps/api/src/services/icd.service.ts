@@ -60,6 +60,10 @@ export class IcdService {
       response_format: 'json_object'
     });
 
+
+    console.log(icd9ResponseText);
+
+
     const parsedIcd9 = extractJsonFromResponse(icd9ResponseText);
     let icd9Codes: string[] = [];
     if (parsedIcd9 && typeof parsedIcd9 === 'object') {

@@ -8,6 +8,10 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   icd10Suggestions: [],
   icd9Suggestions: [],
   selectedCodes: [],
+  isSearchingIcd10: false,
+  isSearchingIcd9: false,
+  icd10Error: null,
+  icd9Error: null,
   rankedCodes: [],
   patientInfo: {
     patientId: "",
@@ -23,42 +27,42 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   setDiagnosisText: (text: string) => set({ diagnosisText: text }),
 
   searchIcdCodes: async (text: string) => {
+    set({ isSearchingIcd10: true, icd10Error: null, icd9Error: null });
     try {
       const data = await apiGet<IcdSuggestionResponse>("/suggest-icd", {
         params: { diagnosis: text },
-      })
-
-      console.log({ data });
-
+      });
 
       const icd10Suggestions: IcdCode[] = (data.icd10 ?? []).map((c) => ({
         code: c.code,
         description: c.description,
         confidence: 1.0,
         category: "icd10",
-      }))
+      }));
 
-      set({ icd10Suggestions })
+      set({ icd10Suggestions, isSearchingIcd10: false });
 
-      const dataIcd9 = await apiGet<IcdCode[]>("/suggest-icd-9", {
-        params: { icd10Codes: icd10Suggestions.map((c) => c.code).join(",") },
-      })
+      set({ isSearchingIcd9: true });
+      try {
+        const dataIcd9 = await apiGet<IcdCode[]>("/suggest-icd-9", {
+          params: { icd10Codes: icd10Suggestions.map((c) => c.code).join(",") },
+        });
 
-      console.log({ dataIcd9 });
+        const icd9Suggestions: IcdCode[] = (dataIcd9 ?? []).map((c) => ({
+          code: c.code,
+          description: c.description,
+          confidence: 1.0,
+          category: "icd9",
+        }));
 
-
-      const icd9Suggestions: IcdCode[] = (dataIcd9 ?? []).map((c) => ({
-        code: c.code,
-        description: c.description,
-        confidence: 1.0,
-        category: "icd9",
-      }))
-
-      set({ icd9Suggestions })
+        set({ icd9Suggestions, isSearchingIcd9: false });
+      } catch (error) {
+        console.error("Failed to fetch ICD-9 suggestions", error);
+        set({ isSearchingIcd9: false, icd9Error: "Failed to load ICD-9 suggestions." });
+      }
     } catch (error) {
-      console.error("Failed to fetch ICD suggestions", error)
-      set({ icd10Suggestions: [], icd9Suggestions: [] })
-      throw error
+      console.error("Failed to fetch ICD-10 suggestions", error);
+      set({ isSearchingIcd10: false, icd10Error: "Failed to load ICD-10 suggestions." });
     }
   },
 

@@ -8,8 +8,7 @@ import { useDiagnosisStore } from "~/libs/store"
 import { toast } from "~/hooks/use-toast"
 
 export function DiagnosisInput() {
-  const { diagnosisText, setDiagnosisText, searchIcdCodes } = useDiagnosisStore()
-  const [isSearching, setIsSearching] = useState(false)
+  const { diagnosisText, setDiagnosisText, searchIcdCodes, isSearchingIcd10, isSearchingIcd9 } = useDiagnosisStore()
   const maxLength = 2000
 
   const handleSearch = async () => {
@@ -22,7 +21,6 @@ export function DiagnosisInput() {
       return
     }
 
-    setIsSearching(true)
     try {
       await searchIcdCodes(diagnosisText)
       toast({
@@ -35,10 +33,10 @@ export function DiagnosisInput() {
         description: "Unable to generate ICD code suggestions. Please try again.",
         variant: "destructive",
       })
-    } finally {
-      setIsSearching(false)
     }
   }
+
+  const isSearching = isSearchingIcd10 || isSearchingIcd9
 
   return (
     <div className="space-y-4">
@@ -62,10 +60,15 @@ export function DiagnosisInput() {
           className="bg-gradient-to-r from-primary-from to-primary-to hover:from-primary-from/90 hover:to-primary-to/90 px-8 py-2 text-base font-medium"
           size="lg"
         >
-          {isSearching ? (
+          {isSearchingIcd10 ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Searching ICD Codes...
+              Searching ICD-10 Codes...
+            </>
+          ) : isSearchingIcd9 ? (
+            <>
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              Searching ICD-9 Codes...
             </>
           ) : (
             <>

@@ -1,11 +1,10 @@
-"use client"
-
 import { Card, CardContent } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
 import { Plus, X } from "lucide-react"
 import { useDiagnosisStore } from "~/libs/store"
 import type { IcdCode } from "~/libs/types"
+import { Skeleton } from "~/components/ui/skeleton"
 
 export function IcdSuggestions() {
   const {
@@ -14,6 +13,10 @@ export function IcdSuggestions() {
     addSelectedCode,
     removeSelectedCode,
     selectedCodes,
+    isSearchingIcd10,
+    isSearchingIcd9,
+    icd10Error,
+    icd9Error,
   } = useDiagnosisStore()
 
   const isCodeSelected = (code: string) => {
@@ -79,7 +82,21 @@ export function IcdSuggestions() {
     <div className="space-y-8">
       <div className="border-b pb-6 mb-6">
         <h3 className="text-xl text-gray-500 font-semibold mb-4">ICD-10 Codes</h3>
-        {icd10Suggestions.length ? (
+        {isSearchingIcd10 ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i}>
+                <CardContent className="p-4">
+                  <Skeleton className="h-5 w-1/4 mb-3" />
+                  <Skeleton className="h-6 w-full mb-4" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : icd10Error ? (
+          <p className="text-red-500">{icd10Error}</p>
+        ) : icd10Suggestions.length > 0 ? (
           renderGrid(icd10Suggestions)
         ) : (
           <p className="text-gray-500">No ICD-10 suggestions found.</p>
@@ -87,7 +104,21 @@ export function IcdSuggestions() {
       </div>
       <div>
         <h3 className="text-xl text-gray-500 font-semibold mb-4">ICD-9 Codes</h3>
-        {icd9Suggestions.length ? (
+        {isSearchingIcd9 ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i}>
+                <CardContent className="p-4">
+                  <Skeleton className="h-5 w-1/4 mb-3" />
+                  <Skeleton className="h-6 w-full mb-4" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : icd9Error ? (
+          <p className="text-red-500">{icd9Error}</p>
+        ) : icd9Suggestions.length > 0 ? (
           renderGrid(icd9Suggestions)
         ) : (
           <p className="text-gray-500">No ICD-9 suggestions found.</p>
