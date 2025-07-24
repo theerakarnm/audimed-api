@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Textarea } from "~/components/ui/textarea"
 import { Button } from "~/components/ui/button"
 import { Search, Loader2 } from "lucide-react"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { toast } from "~/hooks/use-toast"
 
 export function DiagnosisInput() {

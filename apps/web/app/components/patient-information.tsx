@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { User, Search, Plus, UserCheck } from "lucide-react"
 import { PatientSearch } from "~/components/patient-search"
 import { PatientForm } from "~/components/patient-form"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 
 export function PatientInformation() {
   const { patientInfo, isPatientInfoComplete } = useDiagnosisStore()

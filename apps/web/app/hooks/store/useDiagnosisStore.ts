@@ -1,7 +1,7 @@
 import { create } from "zustand"
-import type { IcdCode, DiagnosisState, PatientInfo, IcdSuggestionResponse } from "./types"
-import { apiGet } from "./http"
-import { icd10 } from '../../../api/src/utils/db/schema';
+import type { IcdCode, DiagnosisState, PatientInfo, IcdSuggestionResponse } from "../../libs/types"
+import { apiGet } from "../../libs/http"
+import { icd10 } from '../../../../api/src/utils/db/schema';
 
 export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   diagnosisText: "",

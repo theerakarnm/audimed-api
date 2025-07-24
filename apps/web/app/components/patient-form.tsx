@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover
 import { CalendarIcon, Save } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "~/libs/utils"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { toast } from "~/hooks/use-toast"
 
 interface PatientFormProps {

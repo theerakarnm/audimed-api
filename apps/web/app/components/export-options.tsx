@@ -3,7 +3,7 @@
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { FileText, Download, Printer } from "lucide-react"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { toast } from "~/hooks/use-toast"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"

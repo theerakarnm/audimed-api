@@ -1,7 +1,7 @@
 "use client"
 
 import { Check } from "lucide-react"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { cn } from "~/libs/utils"
 
 export function ProgressStepper() {

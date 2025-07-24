@@ -2,7 +2,7 @@ import { Card, CardContent } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
 import { Plus, X } from "lucide-react"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import type { IcdCode } from "~/libs/types"
 import { Skeleton } from "~/components/ui/skeleton"
 

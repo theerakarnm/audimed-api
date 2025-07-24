@@ -7,7 +7,7 @@ import { ExportOptions } from "~/components/export-options"
 import { Header } from "~/components/header"
 import { PatientInformation } from "~/components/patient-information"
 import { ProgressStepper } from "~/components/progress-stepper"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 
 export const meta: MetaFunction = () => {
   return [

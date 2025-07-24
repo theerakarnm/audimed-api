@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button"
 import { Card, CardContent } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
 import { Search, Loader2, User, Calendar, Phone, FileText } from "lucide-react"
-import { useDiagnosisStore } from "~/libs/store"
+import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { searchPatients, type Patient } from "~/libs/mock-patients"
 import { toast } from "~/hooks/use-toast"
 
