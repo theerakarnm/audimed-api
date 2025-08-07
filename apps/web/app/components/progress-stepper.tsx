@@ -7,7 +7,6 @@ import { cn } from "~/libs/utils"
 export function ProgressStepper() {
   const {
     isPatientInfoComplete,
-    icd10Suggestions,
     icd9Suggestions,
     selectedCodes,
     rankedCodes,
@@ -15,7 +14,7 @@ export function ProgressStepper() {
 
   let currentStep = 1
   if (isPatientInfoComplete()) currentStep = 2
-  if (icd10Suggestions.length > 0 || icd9Suggestions.length > 0) currentStep = 3
+  // if (icd10Suggestions.length > 0 || icd9Suggestions.length > 0) currentStep = 3
   if (selectedCodes.length > 0) currentStep = 4
   if (rankedCodes.length > 0) currentStep = 5
 

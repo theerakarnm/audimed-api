@@ -1,6 +1,4 @@
 import type { MetaFunction } from "@remix-run/node";
-import { DiagnosisInput } from "~/components/diagnosis-input"
-import { IcdSuggestions } from "~/components/icd-suggestions"
 import { SelectedCodes } from "~/components/selected-codes"
 import { RankingInterface } from "~/components/ranking-interface"
 import { ExportOptions } from "~/components/export-options"
@@ -8,6 +6,7 @@ import { Header } from "~/components/header"
 import { PatientInformation } from "~/components/patient-information"
 import { ProgressStepper } from "~/components/progress-stepper"
 import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
+import { CodeSuggestion } from "~/components/code-suggestion";
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,7 +18,7 @@ export const meta: MetaFunction = () => {
 import { withAuth } from '~/components/with-auth';
 
 function Index() {
-  const { diagnosisText, selectedCodes, rankedCodes, isPatientInfoComplete } = useDiagnosisStore()
+  const { selectedCodes, rankedCodes, isPatientInfoComplete } = useDiagnosisStore()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,21 +32,20 @@ function Index() {
             <PatientInformation />
           </section>
 
-          {/* Diagnosis Input Section - Only show if patient info is complete */}
+          {/* Code Suggestion Section - Only show if patient info is complete */}
           {isPatientInfoComplete() && (
             <section className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Patient Diagnosis Input</h2>
-              <DiagnosisInput />
+              <CodeSuggestion />
             </section>
           )}
 
           {/* ICD-10 Suggestions - Only show if diagnosis text exists and patient info complete */}
-          {isPatientInfoComplete() && diagnosisText && (
+          {/* {isPatientInfoComplete() && diagnosisText && (
             <section className="bg-white rounded-lg shadow-sm border p-6">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">ICD-10 Code Suggestions</h2>
               <IcdSuggestions />
             </section>
-          )}
+          )} */}
 
           {/* Selected Codes - Only show if codes are selected */}
           {isPatientInfoComplete() && selectedCodes.length > 0 && (

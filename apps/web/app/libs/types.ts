@@ -27,8 +27,6 @@ export interface PatientInfo {
 }
 
 export interface DiagnosisState {
-  diagnosisText: string
-  icd10Suggestions: IcdCode[]
   icd9Suggestions: IcdCode[]
   selectedCodes: IcdCode[]
   rankedCodes: (IcdCode & { rank: number })[]
@@ -38,12 +36,13 @@ export interface DiagnosisState {
   icd10Error: string | null
   icd9Error: string | null
 
-  setDiagnosisText: (text: string) => void
-  searchIcdCodes: (text: string) => Promise<void>
+  searchIcd10: (text: string) => Promise<IcdCode[]>
+  searchIcd9: (icd10Codes: string[]) => Promise<void>
   addSelectedCode: (code: IcdCode) => void
   removeSelectedCode: (code: string) => void
   setRankedCodes: (codes: (IcdCode & { rank: number })[]) => void
   setPatientInfo: (info: PatientInfo) => void
   isPatientInfoComplete: () => boolean
   recalculateRanking: () => void
+  clearAll: () => void
 }

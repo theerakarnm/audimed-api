@@ -13,7 +13,7 @@ import { toast } from "~/hooks/use-toast"
 import { cn } from "~/libs/utils"
 
 export function SelectedCodes() {
-  const { selectedCodes, removeSelectedCode, addSelectedCode, recalculateRanking, rankedCodes } = useDiagnosisStore()
+  const { selectedCodes, removeSelectedCode, addSelectedCode, recalculateRanking, rankedCodes, clearAll } = useDiagnosisStore()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [customCode, setCustomCode] = useState("")
   const [customDescription, setCustomDescription] = useState("")
@@ -148,6 +148,21 @@ export function SelectedCodes() {
           </Button>
         )} */}
       </div>
+
+      <Button
+        variant="destructive"
+        size="sm"
+        onClick={() => {
+          clearAll();
+          toast({
+            title: "All codes cleared",
+            description: "All ICD-10 and ICD-9 codes have been removed.",
+          });
+        }}
+        disabled={selectedCodes.length === 0}
+      >
+        Clear All
+      </Button>
 
       {selectedCodes.length > 0 && (
         <div className="flex items-center justify-between">
