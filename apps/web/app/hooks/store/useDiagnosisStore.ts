@@ -1,9 +1,10 @@
 import { create } from "zustand"
-import type { IcdCode, DiagnosisState, PatientInfo, IcdSuggestionResponse } from "../../libs/types"
+import type { IcdCode, DiagnosisState, PatientInfo, IcdSuggestionResponse, GroupedIcd9Suggestions } from "../../libs/types"
 import { apiGet } from "../../libs/http"
 
 export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   icd9Suggestions: [],
+  groupedIcd9Suggestions: [],
   selectedCodes: [],
   isSearchingIcd10: false,
   isSearchingIcd9: false,
@@ -57,6 +58,56 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
       set({ icd9Suggestions, isSearchingIcd9: false });
     } catch (error) {
       console.error("Failed to fetch ICD-9 suggestions", error);
+      set({ isSearchingIcd9: false, icd9Error: "Failed to load ICD-9 suggestions." });
+    }
+  },
+
+  searchIcd9Grouped: async (diagnosisGroups: { diagnosisId: number; diagnosisText: string; icd10Codes: string[] }[]) => {
+    set({ isSearchingIcd9: true, icd9Error: null, groupedIcd9Suggestions: [] });
+    
+    try {
+      const groupedResults: GroupedIcd9Suggestions[] = [];
+      
+      for (const group of diagnosisGroups) {
+        if (group.icd10Codes.length === 0) continue;
+        
+        try {
+          const dataIcd9 = await apiGet<IcdCode[]>("/suggest-icd-9", {
+            params: { icd10Codes: group.icd10Codes.join(",") },
+          });
+          
+          const icd9Suggestions: IcdCode[] = (dataIcd9 ?? []).map((c) => ({
+            code: c.code,
+            description: c.description,
+            confidence: 1.0,
+            category: "icd9",
+          }));
+          
+          groupedResults.push({
+            diagnosisId: group.diagnosisId,
+            diagnosisText: group.diagnosisText,
+            icd10Codes: group.icd10Codes,
+            icd9Suggestions,
+          });
+        } catch (error) {
+          console.error(`Failed to fetch ICD-9 suggestions for diagnosis ${group.diagnosisId}`, error);
+          groupedResults.push({
+            diagnosisId: group.diagnosisId,
+            diagnosisText: group.diagnosisText,
+            icd10Codes: group.icd10Codes,
+            icd9Suggestions: [],
+          });
+        }
+      }
+      
+      const allIcd9Suggestions = groupedResults.flatMap(group => group.icd9Suggestions);
+      set({ 
+        groupedIcd9Suggestions: groupedResults, 
+        icd9Suggestions: allIcd9Suggestions,
+        isSearchingIcd9: false 
+      });
+    } catch (error) {
+      console.error("Failed to fetch grouped ICD-9 suggestions", error);
       set({ isSearchingIcd9: false, icd9Error: "Failed to load ICD-9 suggestions." });
     }
   },
@@ -128,6 +179,7 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
       selectedCodes: [],
       rankedCodes: [],
       icd9Suggestions: [],
+      groupedIcd9Suggestions: [],
     });
   },
 }))

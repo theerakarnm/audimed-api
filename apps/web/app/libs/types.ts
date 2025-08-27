@@ -26,8 +26,16 @@ export interface PatientInfo {
   email?: string
 }
 
+export interface GroupedIcd9Suggestions {
+  diagnosisId: number
+  diagnosisText: string
+  icd10Codes: string[]
+  icd9Suggestions: IcdCode[]
+}
+
 export interface DiagnosisState {
   icd9Suggestions: IcdCode[]
+  groupedIcd9Suggestions: GroupedIcd9Suggestions[]
   selectedCodes: IcdCode[]
   rankedCodes: (IcdCode & { rank: number })[]
   patientInfo: PatientInfo
@@ -38,6 +46,7 @@ export interface DiagnosisState {
 
   searchIcd10: (text: string) => Promise<IcdCode[]>
   searchIcd9: (icd10Codes: string[]) => Promise<void>
+  searchIcd9Grouped: (diagnosisGroups: { diagnosisId: number; diagnosisText: string; icd10Codes: string[] }[]) => Promise<void>
   addSelectedCode: (code: IcdCode) => void
   removeSelectedCode: (code: string) => void
   setRankedCodes: (codes: (IcdCode & { rank: number })[]) => void

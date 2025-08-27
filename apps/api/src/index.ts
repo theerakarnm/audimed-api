@@ -4,6 +4,7 @@ import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
 
 import routes from './routes';
+import routesV2 from './routes/v2';
 import authRoutes from './auth/routes';
 import { env, API_CONFIG } from './config';
 import { ApiError } from './utils';
@@ -26,6 +27,7 @@ app.use(
 
 // Mount routes
 app.route('/', routes);
+app.route('/v2', routesV2);
 app.route('/api/auth', authRoutes);
 
 // Global error handler
