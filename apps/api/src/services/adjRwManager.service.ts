@@ -17,6 +17,14 @@ interface AdjRwRecord {
   // Add other fields from Adj_rw.csv if needed
 }
 
+interface RwIndex {
+  Type: string;
+  DRG: string;
+  Range: number;
+  b12: number;
+  b23: number;
+}
+
 // Represents the structure: { "SymptomCode": { "DRG4Digit": DCL_Value } }
 type DclData = Record<string, Record<string, number>>;
 
@@ -51,24 +59,26 @@ class AdjManager {
    * Loads all necessary reference files from the filesystem.
    * @returns A tuple containing the loaded data.
    */
-  loadReferenceData(): [MdcRecord[], AdjRwRecord[], DclData] | [null, null, null] {
+  loadReferenceData(): [MdcRecord[], AdjRwRecord[], DclData, RwIndex[]] | [null, null, null, null] {
     try {
       console.log(__dirname);
 
       const mdcCsv = fs.readFileSync(path.join(__dirname, '../asset/adjrw/MDC.csv'), 'utf-8');
       const adjRwCsv = fs.readFileSync(path.join(__dirname, '../asset/adjrw/Adj_rw.csv'), 'utf-8');
       const dclJson = fs.readFileSync(path.join(__dirname, '../asset/adjrw/DRG_DCL_Table_Output_Summary.json'), 'utf-8');
+      const rwIndex = fs.readFileSync(path.join(__dirname, '../asset/adjrw/rwIndex.json'), 'utf-8');
 
       const mdcDf = this.parseCsv<MdcRecord>(mdcCsv);
       const adjRwDf = this.parseCsv<AdjRwRecord>(adjRwCsv);
       const dclData: DclData = JSON.parse(dclJson);
+      const rwIndexData: RwIndex[] = JSON.parse(rwIndex);
 
       console.log("✅ All reference files loaded successfully.");
-      return [mdcDf, adjRwDf, dclData];
+      return [mdcDf, adjRwDf, dclData, rwIndexData];
     } catch (error: any) {
       console.error("❌ ERROR: A required file was not found. Please check your files.");
       console.error(`Details: ${error.message}`);
-      return [null, null, null];
+      return [null, null, null, null];
     }
   }
 
@@ -173,34 +183,74 @@ class AdjManager {
     return thresholds.length > 0 ? drg4digit + thresholds[thresholds.length - 1][1] : `${drg4digit}?`;
   }
 
-  calculateAdjRw(drg: string, adjRwDf: AdjRwRecord[], los: number): string {
-    console.log("\n" + "=".repeat(40));
-    console.log("STEP 08: Adjusted RW (AdjRw) Calculation");
-    console.log("=".repeat(40));
-    console.log("⚠️ SKIPPED: This calculation is incomplete because 'rw_index.json' is missing.");
 
-    // --- The following logic should be implemented once rw_index.json is available ---
 
-    // const drgNum = parseInt(drg, 10);
-    // const drgParams = adjRwDf.find(record => record.DRG === drgNum);
-    //
-    // if (!drgParams) {
-    //     console.error(`DRG '${drg}' not found in Adj_rw table.`);
-    //     return "Error: DRG not found";
-    // }
-    //
-    // const { RW: rw, RW0D: rw0d, WTLOS: wtlos, OT: ot, MDF: of } = drgParams;
-    //
-    // // ... load rw_index.json and get b12, b23 values ...
-    //
-    // let adjRw = 0;
-    // if (los < wtlos) {
-    //     adjRw = rw0d + los * (rw - rw0d) / Math.ceil(wtlos / 3);
-    // } else {
-    //     // ... logic for long stay cases ...
-    // }
+  b_index(procedure: string, threshold: number, rwIndex: RwIndex[]): [number, number] | [null, null] {
+    const filtered = rwIndex.filter((item) => item.DRG === procedure);
+    for (let i = 0; i < filtered.length; i++) {
+      if (threshold < filtered[i].Range) {
+        return [filtered[i].b12, filtered[i].b23];
+      }
+    }
+    return [null, null]; // Or throw an error if no match is found
+  }
 
-    return "Calculation Skipped";
+  /**
+  * Calculates the Adjusted Relative Weight (AdjRw) based on Length of Stay (LOS).
+  *
+  * @param LOS - Length of Stay (days).
+  * @param OT - Outlier Threshold (days).
+  * @param Rw - Relative Weight for the DRG.
+  * @param OF - Outlier Factor.
+  * @param b12 - Costing coefficient for stays between 1x and 2x OT.
+  * @param b23 - Costing coefficient for stays over 3x OT.
+  * @param Rw0d - Relative Weight for a zero-day stay.
+  * @param WtLOS - Weighted Length of Stay for the DRG.
+  * @returns The calculated adjusted relative weight.
+  */
+  calculateAdjRw(
+    {
+      LOS,
+      OT,
+      Rw,
+      OF,
+      b12,
+      b23,
+      Rw0d,
+      WtLOS
+    }: {
+      LOS: number,
+      OT: number,
+      Rw: number,
+      OF: number,
+      b12: number,
+      b23: number,
+      Rw0d: number,
+      WtLOS: number
+    }
+  ): number {
+    console.log(`Patient LOS is: ${LOS}\nPatient OT is: ${OT}`);
+
+    let adjRw = 0; // Initialize adjRw
+
+    if (LOS < WtLOS) {
+      // This condition is often for short stays
+      adjRw = Rw0d + (LOS * (Rw - Rw0d)) / Math.ceil(WtLOS / 3);
+      console.log(`Condition: Short Stay (LOS < WtLOS: ${LOS} < ${WtLOS})`);
+    } else if (LOS >= OT && LOS < 2 * OT) {
+      adjRw = Rw + OF * b12 * (LOS - OT);
+      console.log(`Condition: OT <= LOS < 2*OT (${OT} <= ${LOS} < ${2 * OT})`);
+    } else if (LOS >= 2 * OT && LOS < 3 * OT) {
+      adjRw = Rw + OF * b12 * OT + OF * b12 * (LOS - 2 * OT);
+      console.log(`Condition: 2*OT <= LOS < 3*OT (${2 * OT} <= ${LOS} < ${3 * OT})`);
+    } else {
+      // This covers LOS >= 3*OT
+      adjRw = Rw + OF * OT * (b12 + b23);
+      console.log(`Condition: LOS >= 3*OT (${LOS} >= ${3 * OT})`);
+    }
+
+    console.log(`Final AdjRw = ${adjRw.toFixed(4)}`);
+    return adjRw;
   }
 
 }

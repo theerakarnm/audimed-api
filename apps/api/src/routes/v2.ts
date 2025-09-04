@@ -8,7 +8,7 @@ v2Route.get('/adjrw', (c) => {
   console.log("=".repeat(40));
   console.log("STEP 01: Loading Reference Data");
   console.log("=".repeat(40));
-  const [MDC_df, Adj_rw_df, DCL_data] = AdjRwManagerService.loadReferenceData();
+  const [MDC_df, Adj_rw_df, DCL_data, rwIndex] = AdjRwManagerService.loadReferenceData();
 
   if (!MDC_df || !Adj_rw_df || !DCL_data) {
     console.log("\nHalting execution due to missing files.");
@@ -58,8 +58,38 @@ v2Route.get('/adjrw', (c) => {
     const finalDrg = AdjRwManagerService.getFinalDrg(drg4digit, PCL_score);
     console.log(`➡️ Final 5-Digit DRG: ${finalDrg}`);
 
+    const drgIndex = Adj_rw_df.find(record => record.DRG === Number(finalDrg));
+
+    if (!drgIndex) {
+      console.log(`Could not find DRG index for Final DRG '${finalDrg}'. Halting.`);
+      throw new Error(`Could not find DRG index for Final DRG '${finalDrg}'`);
+    }
+
+    const procedure = 'M'
+    const Rw = drgIndex['RW']
+    const Rw0d = drgIndex['RW0D']
+    const WtLOS = drgIndex['WTLOS']
+    const OT = drgIndex['OT']
+    const OF = drgIndex['MDF']
+
+    const [b12, b23] = AdjRwManagerService.b_index(procedure, Rw, rwIndex);
+
+    if (!b12 || !b23) {
+      console.log(`Could not find bIndex for Procedure '${procedure}' and RW '${Rw}'. Halting.`);
+      throw new Error(`Could not find bIndex for Procedure '${procedure}' and RW '${Rw}'`);
+    }
+
     // --- STEP 08: Calculate AdjRw ---
-    const adjRwResult = AdjRwManagerService.calculateAdjRw(finalDrg, Adj_rw_df, los);
+    const adjRwResult = AdjRwManagerService.calculateAdjRw({
+      LOS: los,
+      OT,
+      Rw,
+      OF,
+      b12,
+      b23,
+      Rw0d,
+      WtLOS
+    });
     console.log(`➡️ Adjusted RW: ${adjRwResult}`);
 
     // --- FINAL SUMMARY ---

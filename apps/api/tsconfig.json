@@ -7,6 +7,7 @@
     "skipLibCheck": true,
     "strict": true,
     "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
     "jsxImportSource": "hono/jsx",
     "outDir": "./dist", // Specify your output directory here
     "rootDir": "./src" // Optional: specify the root directory of your source files
