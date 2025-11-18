@@ -5,11 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { User, Search, Plus, UserCheck } from "lucide-react"
+import { format } from "date-fns"
 import { PatientSearch } from "~/components/patient-search"
 import { PatientForm } from "~/components/patient-form"
 import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
+import { PatientInfo } from "~/libs/types"
 
-export function PatientInformation() {
+export function PatientInformation({
+  onSelectPatient
+}: {
+  onSelectPatient: (patient: PatientInfo) => void
+}) {
   const { patientInfo, isPatientInfoComplete } = useDiagnosisStore()
   const [activeTab, setActiveTab] = useState("search")
   const [isEditing, setIsEditing] = useState(!isPatientInfoComplete())
@@ -118,6 +124,20 @@ function PatientSummary() {
           <div>
             <label className="text-sm font-medium text-gray-500">Phone</label>
             <p className="text-gray-900">{patientInfo.phone}</p>
+          </div>
+        )}
+        {patientInfo.admitDate && (
+          <div>
+            <label className="text-sm font-medium text-gray-500">Admit Date</label>
+            <p className="text-gray-900">
+              {format(patientInfo.admitDate, "PPP 'at' p")}
+            </p>
+          </div>
+        )}
+        {patientInfo.lengthOfStayDisplay && (
+          <div>
+            <label className="text-sm font-medium text-gray-500">Length of Stay</label>
+            <p className="text-gray-900">{patientInfo.lengthOfStayDisplay}</p>
           </div>
         )}
       </div>

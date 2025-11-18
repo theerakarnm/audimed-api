@@ -20,6 +20,10 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
     mrn: "",
     phone: "",
     email: "",
+    age: 0,
+    lengthOfStay: undefined,
+    admitDate: undefined,
+    lengthOfStayDisplay: undefined,
   },
 
   searchIcd10: async (text: string) => {
@@ -64,25 +68,25 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
 
   searchIcd9Grouped: async (diagnosisGroups: { diagnosisId: number; diagnosisText: string; icd10Codes: string[] }[]) => {
     set({ isSearchingIcd9: true, icd9Error: null, groupedIcd9Suggestions: [] });
-    
+
     try {
       const groupedResults: GroupedIcd9Suggestions[] = [];
-      
+
       for (const group of diagnosisGroups) {
         if (group.icd10Codes.length === 0) continue;
-        
+
         try {
           const dataIcd9 = await apiGet<IcdCode[]>("/suggest-icd-9", {
             params: { icd10Codes: group.icd10Codes.join(",") },
           });
-          
+
           const icd9Suggestions: IcdCode[] = (dataIcd9 ?? []).map((c) => ({
             code: c.code,
             description: c.description,
             confidence: 1.0,
             category: "icd9",
           }));
-          
+
           groupedResults.push({
             diagnosisId: group.diagnosisId,
             diagnosisText: group.diagnosisText,
@@ -99,12 +103,12 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
           });
         }
       }
-      
+
       const allIcd9Suggestions = groupedResults.flatMap(group => group.icd9Suggestions);
-      set({ 
-        groupedIcd9Suggestions: groupedResults, 
+      set({
+        groupedIcd9Suggestions: groupedResults,
         icd9Suggestions: allIcd9Suggestions,
-        isSearchingIcd9: false 
+        isSearchingIcd9: false
       });
     } catch (error) {
       console.error("Failed to fetch grouped ICD-9 suggestions", error);
@@ -159,7 +163,7 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
     const sortedCodes = [...selectedCodes].sort((a, b) => {
 
       if (b.confidence !== a.confidence) {
-        return b.confidence - a.confidence
+        return (b.confidence ?? 0) - (a.confidence ?? 0)
       }
 
       const aPriority = categoryPriority[a.category || "Custom"] || 99

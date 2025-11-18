@@ -11,6 +11,7 @@ import { Search, Loader2, User, Calendar, Phone, FileText } from "lucide-react"
 import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { searchPatients, type Patient } from "~/libs/mock-patients"
 import { toast } from "~/hooks/use-toast"
+import dayjs from "dayjs"
 
 interface PatientSearchProps {
   onPatientSelected: () => void
@@ -69,6 +70,10 @@ export function PatientSearch({ onPatientSelected }: PatientSearchProps) {
       mrn: patient.mrn,
       phone: patient.phone,
       email: patient.email,
+      admitDate: dayjs().subtract(5, 'days').subtract(3, 'hours').toDate(),
+      age: 35,
+      lengthOfStay: 5,
+      lengthOfStayDisplay: "5 days, 3 hours",
     })
 
     toast({

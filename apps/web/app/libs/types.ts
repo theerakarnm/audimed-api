@@ -1,7 +1,7 @@
 export interface IcdCode {
   code: string
   description: string
-  confidence: number
+  confidence?: number
   category?: string
 }
 
@@ -24,6 +24,10 @@ export interface PatientInfo {
   mrn: string
   phone?: string
   email?: string
+  age: number
+  lengthOfStay?: number
+  admitDate?: Date
+  lengthOfStayDisplay?: string
 }
 
 export interface GroupedIcd9Suggestions {

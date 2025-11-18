@@ -1,15 +1,18 @@
 "use client"
+import { useEffect } from "react"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Button } from "~/components/ui/button"
 import { Calendar } from "~/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover"
-import { CalendarIcon, Save } from "lucide-react"
+import { DateTimePicker } from "~/components/ui/datetime-picker"
+import { CalendarIcon, Save, Clock } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "~/libs/utils"
 import { useDiagnosisStore } from "~/hooks/store/useDiagnosisStore"
 import { toast } from "~/hooks/use-toast"
+import { calculateLengthOfStay } from "~/libs/length-of-stay"
 
 interface PatientFormProps {
   onPatientSaved: () => void
@@ -37,11 +40,37 @@ export function PatientForm({ onPatientSaved }: PatientFormProps) {
   }
 
   const updatePatientInfo = (field: string, value: string | Date) => {
-    setPatientInfo({
-      ...patientInfo,
-      [field]: value,
-    })
+    let updatedInfo = { ...patientInfo, [field]: value }
+
+    if (field === "dateOfBirth") {
+      const age = new Date().getFullYear() - (value as Date).getFullYear();
+      updatedInfo.age = age;
+    }
+
+    if (field === "admitDate" && value) {
+      const losResult = calculateLengthOfStay(value as Date)
+      updatedInfo.lengthOfStay = losResult.totalHours
+      updatedInfo.lengthOfStayDisplay = losResult.displayText
+    }
+
+    setPatientInfo(updatedInfo)
   }
+
+  // Update length of stay every minute if admit date is set
+  useEffect(() => {
+    if (!patientInfo.admitDate) return
+
+    const interval = setInterval(() => {
+      const losResult = calculateLengthOfStay(patientInfo.admitDate!)
+      setPatientInfo(prev => ({
+        ...prev,
+        lengthOfStay: losResult.totalHours,
+        lengthOfStayDisplay: losResult.displayText
+      }))
+    }, 60000) // Update every minute
+
+    return () => clearInterval(interval)
+  }, [patientInfo.admitDate, setPatientInfo])
 
   const generatePatientId = () => {
     const id = `P${Date.now().toString().slice(-6)}`
@@ -125,8 +154,6 @@ export function PatientForm({ onPatientSaved }: PatientFormProps) {
             <SelectContent>
               <SelectItem value="male">Male</SelectItem>
               <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-              <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -160,6 +187,35 @@ export function PatientForm({ onPatientSaved }: PatientFormProps) {
             value={patientInfo.email || ""}
             onChange={(e) => updatePatientInfo("email", e.target.value)}
           />
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <Label>Admit Date & Time</Label>
+          <DateTimePicker
+            date={patientInfo.admitDate}
+            onDateChange={(date) => updatePatientInfo("admitDate", date || new Date())}
+            placeholder="Select admit date and time"
+            maxDate={new Date()}
+          />
+          <p className="text-xs text-muted-foreground">
+            Cannot be in the future. Used to calculate length of stay.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="lengthOfStay">Length of Stay</Label>
+          <div className="flex items-center space-x-2">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <Input
+              id="lengthOfStay"
+              value={patientInfo.lengthOfStayDisplay || "Select admit date first"}
+              disabled
+              className="bg-gray-50 text-gray-700"
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Auto-calculated: {patientInfo.lengthOfStay ? `${patientInfo.lengthOfStay} hours total` : "Pending admit date"}
+          </p>
         </div>
       </div>
 

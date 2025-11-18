@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y libc6
 WORKDIR /app
 
 COPY bun.lock package.json tsconfig.json ./
-COPY src ./src
+COPY . .
 
 RUN bun add -d typescript
 
@@ -27,6 +27,6 @@ COPY --from=builder --chown=hono:nodejs /app/dist /app/dist
 COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 
 USER hono
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["bun", "run", "/app/dist/index.js"]

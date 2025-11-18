@@ -1,27 +1,26 @@
 import { apiPost } from './http'
-import type { IcdCode } from './types'
 
 export interface OptimizationRequest {
-  availableCodes: string[]
-  availableOptionalCodes?: string[]
-  maxSecondaryDiagnoses?: number
+  items: string[],
+  gender: 'male' | 'female',
+  age: number,
+  lengthOfStay: number
 }
 
 export interface OptimizationResponse {
-  success: boolean
-  pdx?: IcdCode
-  sdx?: IcdCode[]
-  estimatedAdjRw?: number
-  confidenceLevel?: string
-  primaryWeight?: number
-  secondaryWeight?: number
-  complexityFactor?: number
-  recommendations?: string[]
-  errorMessage?: string
+  error: string | null
+  adjRw: number;
+  bestSetup: {
+    pdx: string,
+    sdx: string[]
+  drgName: string;
+}              
 }
 
 export async function optimizeDiagnosis(
-  req: OptimizationRequest,
+  req: OptimizationRequest, 
 ): Promise<OptimizationResponse> {
-  return apiPost<OptimizationResponse>('/optimize', req)
+  console.log(req);
+  
+  return apiPost<OptimizationResponse>('/v2/adjrw', req)
 }

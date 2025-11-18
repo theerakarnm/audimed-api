@@ -14,6 +14,7 @@ interface AdjRwRecord {
   WTLOS: number;
   OT: number;
   MDF: number;
+  DRGNAME: string;
   // Add other fields from Adj_rw.csv if needed
 }
 
@@ -30,6 +31,11 @@ type DclData = Record<string, Record<string, number>>;
 
 
 class AdjManager {
+
+  _mdcDf: MdcRecord[] = [];
+  _adjRwDf: AdjRwRecord[] = [];
+  _dclData: DclData = {};
+  _rwIndexData: RwIndex[] = [];
 
   /**
  * A simple CSV parser to convert CSV text to an array of objects.
@@ -73,6 +79,11 @@ class AdjManager {
       const dclData: DclData = JSON.parse(dclJson);
       const rwIndexData: RwIndex[] = JSON.parse(rwIndex);
 
+      this._adjRwDf = adjRwDf;
+      this._mdcDf = mdcDf;
+      this._dclData = dclData;
+      this._rwIndexData = rwIndexData;
+
       console.log("✅ All reference files loaded successfully.");
       return [mdcDf, adjRwDf, dclData, rwIndexData];
     } catch (error: any) {
@@ -87,7 +98,6 @@ class AdjManager {
  * This function is a mock-up and needs to be replaced with the full complex logic.
  */
   getDrg4Digit(
-    mdcDf: MdcRecord[],
     pdx: string,
     sdx: string[],
     proc: string[],
@@ -95,20 +105,20 @@ class AdjManager {
     age: number
   ): string | null {
     // 3.1: Find MDC from the principal diagnosis (pdx)
-    const mdcRecord = mdcDf.find(record => record.CODE === pdx);
+    const mdcRecord = this._mdcDf.find(record => record.CODE === pdx);
 
     if (!mdcRecord) {
       console.warn(`⚠️ Warning: PDX '${pdx}' not found in MDC reference table. Cannot determine MDC.`);
       return null;
     }
     const mdc = mdcRecord.MDC;
-    console.log(`Input PDX = '${pdx}' maps to MDC = ${mdc}`);
+    // console.log(`Input PDX = '${pdx}' maps to MDC = ${mdc}`);
 
     // 3.2: Determine DRG based on MDC (mock logic)
     switch (mdc) {
       case 5: return '0555';
       case 4: return '0452';
-      case 11: return '1159';
+      case 11: return '1158';
       default: return null;
     }
   }
@@ -116,19 +126,19 @@ class AdjManager {
   /**
  * Calculates the Patient Clinical Complexity Level (PCL) score.
  */
-  calculatePclScore(pdx: string, sdx: string[], drg4digit: string, dclData: DclData): number {
+  calculatePclScore(pdx: string, sdx: string[], drg4digit: string): number {
     // Combine principal and secondary diagnoses
     const allDiagnoses = [pdx, ...sdx];
-    console.log(`\nAll diagnoses for PCL calculation: ${allDiagnoses.join(', ')}`);
+    // console.log(`\nAll diagnoses for PCL calculation: ${allDiagnoses.join(', ')}`);
 
     // Step 4 & 5: Find DCL for each diagnosis and create a map
     const pclMap = new Map<string, number>();
     allDiagnoses.forEach(code => {
-      const dclValue = dclData[code]?.[drg4digit] ?? 0;
+      const dclValue = this._dclData[code]?.[drg4digit] ?? 0;
       pclMap.set(code, dclValue);
     });
 
-    console.log("Unsorted DCL values:", Object.fromEntries(pclMap));
+    // console.log("Unsorted DCL values:", Object.fromEntries(pclMap));
 
     // Sort the entries by DCL (descending) and then by code (alphanumeric ascending)
     const sortedEntries = [...pclMap.entries()].sort((a, b) => {
@@ -140,7 +150,7 @@ class AdjManager {
       return 0;
     });
 
-    console.log("Sorted DCL values for calculation:", Object.fromEntries(new Map(sortedEntries)));
+    // console.log("Sorted DCL values for calculation:", Object.fromEntries(new Map(sortedEntries)));
 
     // Step 6: Calculate the final PCL score
     let pclScore = 0;
@@ -159,7 +169,7 @@ class AdjManager {
     const fifthDrgTable: Record<string, Record<string, string>> = {
       '0555': { '2': '0', '4': '1', '6': '2', '8': '3', '9': '4' },
       '0452': { '1': '0', '3': '1', '5': '2', '7': '3', '9': '4' },
-      '1159': { '3': '0', '5': '1', '6': '2', '9': '3' },
+      '1158': { '3': '0', '5': '1', '6': '2', '9': '3' },
     };
 
     const rules = fifthDrgTable[drg4digit];
@@ -185,8 +195,8 @@ class AdjManager {
 
 
 
-  b_index(procedure: string, threshold: number, rwIndex: RwIndex[]): [number, number] | [null, null] {
-    const filtered = rwIndex.filter((item) => item.DRG === procedure);
+  b_index(procedure: string, threshold: number): [number, number] | [null, null] {
+    const filtered = this._rwIndexData.filter((item) => item.DRG === procedure);
     for (let i = 0; i < filtered.length; i++) {
       if (threshold < filtered[i].Range) {
         return [filtered[i].b12, filtered[i].b23];
@@ -249,10 +259,14 @@ class AdjManager {
       console.log(`Condition: LOS >= 3*OT (${LOS} >= ${3 * OT})`);
     }
 
-    console.log(`Final AdjRw = ${adjRw.toFixed(4)}`);
+    // console.log(`Final AdjRw = ${adjRw.toFixed(4)}`);
     return adjRw;
+  }
+
+  getDRGIndex(finalDrg: string) {
+    return this._adjRwDf.find(record => record.DRG === Number(finalDrg));
   }
 
 }
 
-export default new AdjManager();
+export default AdjManager;

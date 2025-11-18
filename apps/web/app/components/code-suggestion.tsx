@@ -110,7 +110,7 @@ export function CodeSuggestion() {
         diagnosisText: window.text,
         icd10Codes: window.selectedIcd10Codes.map((code) => code.code)
       }))
-    
+
     if (diagnosisGroups.length === 0) {
       toast({
         title: "ICD-10 Codes Required",
@@ -119,7 +119,7 @@ export function CodeSuggestion() {
       })
       return
     }
-    
+
     try {
       await searchIcd9Grouped(diagnosisGroups)
       toast({
@@ -148,7 +148,7 @@ export function CodeSuggestion() {
     setDiagnosisWindows((prevWindows) =>
       prevWindows.map((window) => {
         if (window.id !== windowId) return window
-        
+
         const isSelected = window.selectedIcd10Codes.some((selected) => selected.code === icdCode.code)
         if (isSelected) {
           // Remove from window's selected codes
@@ -175,6 +175,29 @@ export function CodeSuggestion() {
     } else {
       addSelectedCode(icdCode)
     }
+  }
+
+  const handleExampleCode = () => {
+    const exampleCode: IcdCode[] = [{ code: "A395", description: "Meningococcal heart disease" },
+    { code: "E876", description: "Hypokalaemia" },
+    { code: "H259", description: "Senile cataract, unspecified" },
+    { code: "I10", description: "Essential(primary) hypertension" },
+    // { code: "I500", description: "Congestive heart failure" },
+    { code: "J156", description: "Pneumonia due to other aerobic Gram - negative bacteria" },
+    { code: "J189", description: "Pneumonia, unspecified" },
+    { code: "K250", description: "Gastric ulcer Acute with haemorrhage" },
+    { code: "N0068", description: "Acute nephritic syndrome at dense deposit disease multiple immunoglobulin staining" },
+    { code: "N0100", description: "Rapidly progressive nephritic syndrome at minor glomerular abnormality  IgM staining" },
+    { code: "N0139", description: "Rapidly progressive nephritic syndrome at diffuse mesangial proliferative glomerulonephritis unspecified" },
+    { code: "N0142", description: "Rapidly progressive nephritic syndrome at diffuse endocapillary proliferative glomerulonephritis IgG staining" },
+    { code: "N0150", description: "Rapidly progressive nephritic syndrome at diffuse mesangiocapillary glomerulonephritis IgM staining" },
+    { code: "T829", description: "Unspecified complication of cardiac and vascular prosthetic device, implant and graft" },
+    { code: "T862", description: "Heart transplant failure and rejection" },]
+
+    exampleCode.forEach(code =>
+      addSelectedCode(code)
+    );
+
   }
 
   const renderIcd10List = (windowId: number, list: IcdCode[]) => (
@@ -313,7 +336,7 @@ export function CodeSuggestion() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl text-gray-500 font-semibold">Code Suggestion</h3>
+      <h3 onClick={handleExampleCode} className="text-xl text-gray-500 font-semibold">Code Suggestion</h3>
       {diagnosisWindows.map((window, index) => (
         <div key={window.id} className="p-4 border rounded-lg space-y-4">
           <div className="flex justify-between items-center">

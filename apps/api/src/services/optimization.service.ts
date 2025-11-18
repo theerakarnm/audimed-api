@@ -318,4 +318,31 @@ Respond ONLY with valid JSON in the format:
   async testConnection(): Promise<boolean> {
     return this.deepSeekService.testConnection();
   }
+
+  /**
+   * ฟังก์ชัน Helper สำหรับสร้างชุดค่าผสม (Combinations) ทั้งหมด
+   * @param {Array<any>} arr - อาร์เรย์ของไอเท็มทั้งหมด
+   * @param {number} k - จำนวนไอเท็มที่ต้องการเลือกในแต่ละชุด
+   * @returns {Array<Array<any>>} อาร์เรย์ 2 มิติที่เก็บทุกชุดค่าผสมที่เป็นไปได้
+   */
+  getCombinations(arr: string[], k: number) {
+    const result: string[][] = [];
+    function combine(startIndex: number, currentCombination: string[]) {
+      if (currentCombination.length === k) {
+        result.push([...currentCombination]);
+        return;
+      }
+      if (startIndex >= arr.length) {
+        return;
+      }
+      // เลือก item ปัจจุบัน
+      currentCombination.push(arr[startIndex]);
+      combine(startIndex + 1, currentCombination);
+      // ไม่เลือก item ปัจจุบัน
+      currentCombination.pop();
+      combine(startIndex + 1, currentCombination);
+    }
+    combine(0, []);
+    return result;
+  }
 }

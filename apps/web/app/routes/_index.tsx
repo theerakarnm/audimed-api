@@ -29,7 +29,7 @@ function Index() {
         <div className="space-y-8">
           {/* Patient Information Section - Always First */}
           <section>
-            <PatientInformation />
+            <PatientInformation onSelectPatient={() => { return }} />
           </section>
 
           {/* Code Suggestion Section - Only show if patient info is complete */}
